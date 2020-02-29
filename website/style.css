@@ -1,0 +1,138 @@
+@view {
+    height: 600px;
+}
+
+.slidecontainer {
+    width: 100%;
+    text-align: center;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 45%;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #017BFF;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #017BFF;
+    cursor: pointer;
+}
+
+.col_title {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.col_title:hover{
+    text-decoration: none
+}
+
+#time {
+    width: 40px;
+    text-align: center;
+    color: #ACB382;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.form-check {
+}
+
+.col{
+    text-align: center;
+}
+
+.navbar-custom {
+    background-color: #CC3333;
+}
+body {
+background-color:azure
+}
+
+
+
+.link {
+    color: white
+}
+
+.link:hover{
+    text-decoration: none;
+    color: white;
+}
+
+
+
+.btn {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+h3 {
+    color: #017BFF;
+    font-weight: bold
+}
+
+#slider {
+    font-weight: bold;
+    color:#ACB382;
+    font-size: 18px;
+}
+
+#value {
+    color: #ACB382;
+}
+
+#time {
+    
+}
+
+#suffix {
+    color: #017BFF;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.form-check-label {
+    color: #017BFF;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
+
+
+
+
+
+
+
+h4 {
+    color: #017BFF;
+}
+
+#spec {
+    text-align: left;
+}

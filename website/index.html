@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Project</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+    <div class="container">
+        <br />
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-primary btn-lg">
+                    <a class="link" href="index.html">
+                        <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
+                        Badanie
+                    </a>
+                </button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary btn-lg">
+                    <a class="link" href="about.html">
+                        <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
+                        O projekcie
+                    </a>
+                </button>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Miernik czasu reakcji na bodźce świetlne
+                </h3>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col">
+                <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Ustaw ilość pomiarów z zakresu od 1 do 20.">Ilość pomiarów: <span id="value"></span></a>
+                <br />
+                <br />
+                <div class="slidecontainer">
+                    <div id="slider">
+                        1
+                        <input type="range" min="1" max="20" value="5" class="slider" id="myRange" />
+                        20
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Wybierz czas zapalenia diody losowy bądź własny .">Czas zapalenia diody:</a>
+                <br />
+                <br />
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked />
+                    <label class="form-check-label" for="exampleRadios1">
+                        Losowy
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option2" />
+                    <label class="form-check-label" for="exampleRadios1">
+                        Własny&nbsp;
+                    </label>
+                    <input id="time" min="1" max="99" type="number" step="1" value="3" />
+                    <span id="suffix">s</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <br />
+                <br />
+                <button type="button" class="btn btn-primary btn-lg" onclick="addData(myChart,Feb,5)">
+                    <i class="fas fa-user-md" style="font-size: 25px;"></i>
+                    Rozpocznij badanie
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <br />
+                <br>
+                <h3>Wyniki badania</h3>
+                <canvas id="myChart"></canvas>
+                <br>
+                <h3>Średni czas reakcji: 475 ms</h3>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("value");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        };
+
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: ["1", "2", "3", "4", "5"],
+                datasets: [{
+                    label: "Wynik [ms]",
+                    borderColor: "#017BFF",
+                    data: [446, 480, 460, 490, 500]
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+                legend: {
+                    display: false,
+                    position: "bottom"
+                },
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Czas reakcji [ms]'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Numer pomiaru'
+                        }
+                    }]
+                }
+            },
+
+        });
+    </script>
+</body>
+
+</html>
