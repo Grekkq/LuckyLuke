@@ -19,37 +19,44 @@
         <br />
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-primary btn-lg">
-                    <a class="link" href="index.html">
-                        <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
-                        Badanie
-                    </a>
-                </button>
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <a class="link" href="index.html">
+                            <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
+                            Badanie
+                        </a>
+                    </button>
+                </div>
             </div>
             <div class="col">
-                <button type="button" class="btn btn-primary btn-lg">
-                    <a class="link" href="about.html">
-                        <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
-                        O projekcie
-                    </a>
-                </button>
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="row">
-            <div class="col">
-                <h3>
-                    Miernik czasu reakcji na bodźce świetlne
-                </h3>
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <a class="link" href="about.html">
+                            <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
+                            O projekcie
+                        </a>
+                    </button>
+                </div>
             </div>
         </div>
         <br />
         <br />
         <div class="row">
             <div class="col">
-                <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Ustaw ilość pomiarów z zakresu od 1 do 20.">Ilość pomiarów: <span id="value"></span></a>
-                <br />
+                <div class="center">
+                    <h4>
+                        Miernik czasu reakcji na bodźce świetlne
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col">
+                <div class="center">
+                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Ustaw ilość pomiarów z zakresu od 1 do 20.">Ilość pomiarów: <span id="value"></span></a>
+                </div>
                 <br />
                 <div class="slidecontainer">
                     <div id="slider">
@@ -60,8 +67,9 @@
                 </div>
             </div>
             <div class="col">
-                <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Wybierz czas zapalenia diody losowy bądź własny .">Czas zapalenia diody:</a>
-                <br />
+                <div class="center">
+                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Wybierz czas zapalenia diody losowy bądź własny .">Czas zapalenia diody:</a>
+                </div>
                 <br />
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked />
@@ -72,7 +80,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option2" />
                     <label class="form-check-label" for="exampleRadios1">
-                        Własny&nbsp;
+                        Własny
                     </label>
                     <input id="time" min="1" max="99" type="number" step="1" value="3" />
                     <span id="suffix">s</span>
@@ -83,22 +91,26 @@
             <div class="col">
                 <br />
                 <br />
-                <button type="button" class="btn btn-primary btn-lg" onclick="addData(myChart,Feb,5)">
-                    <i class="fas fa-user-md" style="font-size: 25px;"></i>
-                    Rozpocznij badanie
-                </button>
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="startTest()">
+                        <i class="fas fa-user-md" style="font-size: 25px;"></i>
+                        Rozpocznij badanie
+                    </button>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="col">
+            <div id="result" class="col">
                 <br />
-                <br>
-                <h3>Wyniki badania</h3>
-                <canvas id="myChart"></canvas>
-                <br>
-                <h3>Średni czas reakcji: 475 ms</h3>
-                <br>
-                <br>
+                <br />
+                <div class="center">
+                    <h4>Wyniki badania</h4>
+                    <canvas id="myChart"></canvas>
+                    <br />
+                    <h4>Średni czas reakcji:&nbsp;<span id="average"></span>&nbsp;ms</h4>
+                    <br />
+                    <br />
+                </div>
             </div>
         </div>
     </div>
@@ -120,15 +132,17 @@
         var chart = new Chart(ctx, {
             type: "line",
             data: {
-                labels: ["1", "2", "3", "4", "5"],
+                //labels: ["1", "2", "3", "4", "5"],
                 datasets: [{
                     label: "Wynik [ms]",
-                    borderColor: "#017BFF",
-                    data: [446, 480, 460, 490, 500]
+                    backgroundColor: "#ACB382",
+                    //data: [446, 480, 460, 490, 500],
+                    showLine: false,
+                    pointStyle: 'circle',
+                    pointRadius: 7,
+                    pointHoverRadius: 12,
                 }]
             },
-
-            // Configuration options go here
             options: {
                 legend: {
                     display: false,
@@ -138,19 +152,64 @@
                     yAxes: [{
                         scaleLabel: {
                             display: true,
-                            labelString: 'Czas reakcji [ms]'
+                            labelString: "Czas reakcji [ms]",
+                            fontSize: 18,
+                            fontColor: '#017BFF',
+                            fontStyle: 'bold'
+                        },
+                        ticks: {
+                            //beginAtZero: true,
+                            //max: 600,
+                            //stepSize: 50,
+                            //min: 10,
+                            fontSize: 15,
+                            fontColor: '#017BFF',
+                            padding: 5,
                         }
                     }],
                     xAxes: [{
+                        gridLines: {
+                            display: true
+                        },
                         scaleLabel: {
                             display: true,
-                            labelString: 'Numer pomiaru'
+                            labelString: "Numer pomiaru",
+                            fontSize: 18,
+                            fontColor: '#017BFF',
+                            fontStyle: 'bold'
+                        },
+                        ticks: {
+                            fontSize: 15,
+                            fontColor: '#017BFF',
+                            padding: 5,
                         }
+
                     }]
                 }
-            },
-
+            }
         });
+        var label = 1;
+        var sum = 0;
+
+        function addData(chart) {
+            var data = Math.floor(Math.random() * (500 - 400 + 1)) + 400;
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+            label++;
+            sum += data;
+        }
+
+        function startTest() {
+            document.getElementById('result').style.display = "block";
+            while (label <= slider.value) {
+                addData(chart);
+            }
+            document.getElementById("average").innerHTML = Math.ceil(sum / slider.value);
+        }
+
     </script>
 </body>
 

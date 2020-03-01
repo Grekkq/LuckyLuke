@@ -43,11 +43,12 @@
 
 .col_title {
     font-weight: bold;
-    font-size: 22px;
+    font-size: 20px;
 }
 
 .col_title:hover{
-    text-decoration: none
+    text-decoration: none;
+    color: #017BFF;
 }
 
 #time {
@@ -59,19 +60,11 @@
 }
 
 .form-check {
+    margin-left: 30%;
 }
 
 .col{
-    text-align: center;
 }
-
-.navbar-custom {
-    background-color: #CC3333;
-}
-body {
-background-color:azure
-}
-
 
 
 .link {
@@ -121,18 +114,24 @@ h3 {
     font-size: 18px;
 }
 
-
-
-
-
-
-
-
-
 h4 {
     color: #017BFF;
 }
 
 #spec {
     text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+
+
+#result {
+    display: none
+}
+
+#average {
+    color: #ACB382;
 }
