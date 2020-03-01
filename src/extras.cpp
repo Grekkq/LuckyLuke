@@ -1,5 +1,6 @@
 #include "LinkedList.h"
 #include <Arduino.h>
+#include <Adafruit_SSD1306.h>
 // time between lighting up in miliseconds
 #define RandomTimeLowerBound 300
 #define RandomTimeUpperBound 1300
@@ -26,8 +27,8 @@ int LightAndClockStop(int LightPin, int ButtonPin) {
     return millis();
 }
 
-LinkedList<int> InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp) {
-
+LinkedList<int> InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
+    display.write('test\ntest');
     LinkedList<int> Score;
     int RandomTime, StartTime, FinishTime = 0;
     for (int i = 0; i < NumberOfMeasurement; i++) {

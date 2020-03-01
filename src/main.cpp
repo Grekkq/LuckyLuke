@@ -31,6 +31,6 @@ void loop() {
     // LightAndClockStart(LightPin);
     // LightAndClockStop(LightPin, ButtonPin);
     // delay(1000);
-    InitializeTest(LightPin, ButtonPin, 5, (-1));
+    InitializeTest(LightPin, ButtonPin, display, 5, (-1));
     
 }
