@@ -1,4 +1,3 @@
-//asd
 #include "Adafruit_GFX.h"
 #include <Adafruit_SSD1306.h>
 #include "extras.h"
@@ -23,6 +22,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void setup() {
     PinSetup(LightPin, ButtonPin);
+    display.clearDisplay();
+    display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
 }
 
 void loop() {
@@ -31,4 +32,5 @@ void loop() {
     // LightAndClockStop(LightPin, ButtonPin);
     // delay(1000);
     InitializeTest(LightPin, ButtonPin, 5, (-1));
+    
 }
