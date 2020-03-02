@@ -30,7 +30,7 @@ int LightAndClockStop(int LightPin, int ButtonPin) {
 }
 
 LinkedList<int> InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
-    display.write('test\ntest');
+    // display.write('test\ntest');
     LinkedList<int> Score;
     int RandomTime, StartTime, FinishTime = 0;
     for (int i = 0; i < NumberOfMeasurement; i++) {

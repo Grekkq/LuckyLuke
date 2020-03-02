@@ -1,5 +1,8 @@
+#include "Adafruit_GFX.h"
 #include "LinkedList.h"
+#include <Adafruit_SSD1306.h>
 #include <Arduino.h>
+#include <Wire.h>
 
 // Set LED pin as output and Button pin as input with pullup resistor
 void PinSetup(int LightPin, int ButtonPin);
