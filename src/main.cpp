@@ -5,17 +5,26 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+// ta biblioteka to same kłopty xd
+// #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 
-// zdefiniowac jak jest podlaczony uklad
-// SCL - 1
-// SDA - 2
-// LED - ??
-// Przycisk - ??
+// Pin Assigments
 #define LightPin D4
 #define ButtonPin D3
 
-// Screen setup
+// WiFi config in SafeStorage.h Template:
+// #ifndef SAFESTORAGE_H
+// #define SAFESTORAGE_H
+// // WiFi config
+// const char *ssid = "Koparka Apokalipsy";
+// const char *password = "xd";
+// #endif
+
+// Server Setup
+
+// Screen etup
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
