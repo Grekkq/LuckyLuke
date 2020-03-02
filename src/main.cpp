@@ -2,12 +2,11 @@
 #include "extras.h"
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
-#include <DNSServer.h>
-#include <ESP8266WebServer.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
+#include <FS.h>
 // ta biblioteka to same kłopty xd
-// #include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebServer.h>
 #include <Wire.h>
 
 // Pin Assigments
@@ -56,6 +55,6 @@ void loop() {
     LightAndClockStart(LightPin);
     LightAndClockStop(LightPin, ButtonPin);
     delay(1000);
-    InitializeTest(LightPin, ButtonPin, display, 5, (-1));
+    // InitializeTest(LightPin, ButtonPin, display, 5, (-1));
     delay(5000);
 }
