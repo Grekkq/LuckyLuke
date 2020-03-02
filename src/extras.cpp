@@ -1,11 +1,13 @@
 #include "LinkedList.h"
-#include <Arduino.h>
 #include <Adafruit_SSD1306.h>
+#include <Arduino.h>
 // time between lighting up in miliseconds
 #define RandomTimeLowerBound 300
 #define RandomTimeUpperBound 1300
 // default button position
 #define DefualtButtonPosition HIGH
+// mosfet activation
+#define ShortedMosfet LOW
 
 void PinSetup(int LightPin, int ButtonPin) {
 
@@ -15,7 +17,7 @@ void PinSetup(int LightPin, int ButtonPin) {
 
 int LightAndClockStart(int LightPin) {
 
-    digitalWrite(LightPin, HIGH);
+    digitalWrite(LightPin, ShortedMosfet);
     return millis();
 }
 
@@ -23,7 +25,7 @@ int LightAndClockStop(int LightPin, int ButtonPin) {
 
     while (digitalRead(ButtonPin) == DefualtButtonPosition) {
     }
-    digitalWrite(LightPin, LOW);
+    digitalWrite(LightPin, !ShortedMosfet);
     return millis();
 }
 
