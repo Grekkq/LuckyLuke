@@ -8,6 +8,7 @@
 // ta biblioteka to same kłopty xd
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
+#include "SafeStorage.h"
 
 // Pin Assigments
 #define LightPin D4
@@ -22,6 +23,7 @@
 // #endif
 
 // Server Setup
+AsyncWebServer server(80);
 
 // Screen etup
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -31,13 +33,73 @@
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-void setup() {
+String ledState;
+
+
+// Replaces placeholder with LED state value
+String processor(const String& var){
+  Serial.println(var);
+  if(var == "STATE"){
+    if(digitalRead(LightPin)){
+      ledState = "ON";
+    }
+    else{
+      ledState = "OFF";
+    }
+    Serial.print(ledState);
+    return ledState;
+  }
+}
+
+
+void setup()
+{
+    Serial.begin(115200);
+
     PinSetup(LightPin, ButtonPin);
     // display.clearDisplay();
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
+
+    if (!SPIFFS.begin())
+    {
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return;
+    }
+
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(1000);
+        Serial.println("Connecting to WiFi..");
+    }
+
+    Serial.println(WiFi.localIP());
+
+    // Route for root / web page
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
+
+    // Route to load style.css file
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/style.css", "text/css");
+    });
+    // Route to set GPIO to HIGH
+    server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+        digitalWrite(LightPin, HIGH);
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
+
+    // Route to set GPIO to LOW
+    server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+        digitalWrite(LightPin, LOW);
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
+    server.begin();
 }
 
-void loop() {
+void loop()
+{
     // if(digitalRead(ButtonPin)==LOW) {
     //     digitalWrite(LightPin, HIGH);
     // } else
@@ -51,10 +113,10 @@ void loop() {
     // delay(500);
 
     // Basic Test xD
-    delay(1000);
-    LightAndClockStart(LightPin);
-    LightAndClockStop(LightPin, ButtonPin);
-    delay(1000);
+    // delay(1000);
+    // LightAndClockStart(LightPin);
+    // LightAndClockStop(LightPin, ButtonPin);
+    // delay(1000);
     // InitializeTest(LightPin, ButtonPin, display, 5, (-1));
-    delay(5000);
+    // delay(5000);
 }
