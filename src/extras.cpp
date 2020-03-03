@@ -6,7 +6,7 @@
 #define RandomTimeLowerBound 300
 #define RandomTimeUpperBound 1300
 // default button position
-#define DefualtButtonPosition HIGH
+#define DefualtButtonPosition LOW
 // mosfet activation
 #define ShortedMosfet LOW
 
@@ -25,6 +25,7 @@ int LightAndClockStart(int LightPin) {
 int LightAndClockStop(int LightPin, int ButtonPin) {
 
     while (digitalRead(ButtonPin) == DefualtButtonPosition) {
+        ESP.wdtFeed();
     }
     digitalWrite(LightPin, !ShortedMosfet);
     return millis();

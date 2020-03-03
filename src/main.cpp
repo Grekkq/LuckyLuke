@@ -10,9 +10,8 @@
 #include <Wire.h>
 #include "SafeStorage.h"
 
-//zmienna do przechowywania wartosci z input ze strony
-const char* PARAM_INPUT_1 = "ilosc";
-const char* PARAM_INPUT_2 = "czas";
+int ilosc = 0;
+int czas = 0;
 
 // Pin Assigments
 #define LightPin D4
@@ -101,24 +100,30 @@ void setup()
     });
     
     server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-      String inputMessage,inputMessage2;
-      String inputParam,inputParam2;
-      // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
-      if (request->hasParam(PARAM_INPUT_1,PARAM_INPUT_2)) {
-        inputMessage = request->getParam(PARAM_INPUT_1)->value();
-        inputMessage2 = request->getParam(PARAM_INPUT_2)->value();
-        inputParam = PARAM_INPUT_1;
-        inputParam = PARAM_INPUT_2;
-      } else
-      {
-        inputMessage="Brak wiadomosci";
-        inputParam="nic";
+      int paramsNr = request->params();
+      Serial.println(paramsNr);
+
+      // for(int i=0;i<paramsNr;i++){
+      //   AsyncWebParameter* p = request->getParam(i);
+      //   Serial.print("Param name: ");
+      //   Serial.println(p->name());
+      //   Serial.print("Param value: ");
+      //   Serial.println(p->value());
+      //   Serial.println("------");
+      // }
+      
+      ilosc=(request->getParam(0)->value()).toInt();
+      czas=(request->getParam(1)->value()).toInt();
+      Serial.println(ilosc);
+      Serial.println(czas);
+
+      
+      request->send(SPIFFS, "/measurement.html", String(), false,processor);
+      int * wyniki=InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
+      for(int i=0;i<ilosc;i++){
+          Serial.println(wyniki[i]);
       }
-      Serial.println(inputParam);
-      Serial.println(inputMessage);
-      Serial.println(inputParam2);
-      Serial.println(inputMessage2);
-      request->send(SPIFFS, "/index.html", String(), false, processor);
+
     });
 
     server.begin();
