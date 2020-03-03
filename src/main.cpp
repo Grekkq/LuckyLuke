@@ -10,6 +10,10 @@
 #include <Wire.h>
 #include "SafeStorage.h"
 
+//zmienna do przechowywania wartosci z input ze strony
+const char* PARAM_INPUT_1 = "ilosc";
+const char* PARAM_INPUT_2 = "czas";
+
 // Pin Assigments
 #define LightPin D4
 #define ButtonPin D3
@@ -46,7 +50,7 @@ String processor(const String& var){
     else{
       ledState = "OFF";
     }
-    Serial.print(ledState);
+    Serial.println(ledState);
     return ledState;
   }
 }
@@ -95,6 +99,28 @@ void setup()
         digitalWrite(LightPin, LOW);
         request->send(SPIFFS, "/index.html", String(), false, processor);
     });
+    
+    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
+      String inputMessage,inputMessage2;
+      String inputParam,inputParam2;
+      // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+      if (request->hasParam(PARAM_INPUT_1,PARAM_INPUT_2)) {
+        inputMessage = request->getParam(PARAM_INPUT_1)->value();
+        inputMessage2 = request->getParam(PARAM_INPUT_2)->value();
+        inputParam = PARAM_INPUT_1;
+        inputParam = PARAM_INPUT_2;
+      } else
+      {
+        inputMessage="Brak wiadomosci";
+        inputParam="nic";
+      }
+      Serial.println(inputParam);
+      Serial.println(inputMessage);
+      Serial.println(inputParam2);
+      Serial.println(inputMessage2);
+      request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
+
     server.begin();
 }
 
