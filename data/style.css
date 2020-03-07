@@ -129,7 +129,6 @@ h4 {
 
 
 #result {
-    display: none
 }
 
 #average {
@@ -137,6 +136,7 @@ h4 {
 }
 
 #ilosc {
+    display: none;
 }
 
 #od_value {
@@ -160,4 +160,16 @@ h4 {
     color: #ACB382;
     font-weight: bold;
     font-size: 17px;
+}
+
+#czas {
+    display: none;
+}
+
+#od {
+    display: none;
+}
+
+#do {
+    display: none;
 }

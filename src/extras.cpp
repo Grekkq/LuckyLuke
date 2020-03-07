@@ -5,6 +5,8 @@
 
 volatile int NumberOfMesurementsFromWeb = 0;
 volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
+volatile int RandomTimeMinBoundFromWeb = 0;
+volatile int RandomTimeMaxBoundFromWeb = 0;
 volatile bool initializeTestFromWebFlag = false;
 // Stores time in miliseconds from button interrupt
 volatile unsigned long FinishTime = 0;
@@ -13,9 +15,6 @@ volatile bool InterruptFlag = 0;
 
 #define EdgeOnButtonPress RISING
 #define ShortedMosfet HIGH
-// time between lighting up in miliseconds
-#define RandomTimeLowerBound 3000
-#define RandomTimeUpperBound 7000
 
 void ICACHE_RAM_ATTR doOnButtonClick() {
     FinishTime = millis();
@@ -66,23 +65,29 @@ void ConfigureWebpages(AsyncWebServer & server) {
     server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
         NumberOfMesurementsFromWeb = (request->getParam(0)->value()).toInt();
         TimeBetweenLightingUpDiodeFromWeb = (request->getParam(1)->value()).toInt();
+        RandomTimeMinBoundFromWeb = (request->getParam(2)->value()).toInt();
+        RandomTimeMaxBoundFromWeb = (request->getParam(3)->value()).toInt();
         Serial.print("NumberOfMesurementsFromWeb: ");
         Serial.println(NumberOfMesurementsFromWeb);
         Serial.print("TimeBetweenLightingUpDiodeFromWeb: ");
         Serial.println(TimeBetweenLightingUpDiodeFromWeb);
+        Serial.print("RandomTimeMinBoundFromWeb: ");
+        Serial.println(RandomTimeMinBoundFromWeb);
+        Serial.print("RandomTimeMaxBoundFromWeb: ");
+        Serial.println(RandomTimeMaxBoundFromWeb);
         initializeTestFromWebFlag = true;
         // request->send(SPIFFS, "/measurement.html", String(), false, processor);
         request->send(SPIFFS, "/measurement.html");
     });
 }
 
-int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
+int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
     int *Score = new int[NumberOfMeasurement];
     int RandomTime = 0;
     unsigned long StartTime = 0, ElapsedTime = 0;
     Serial.println("Test Initialization");
     for (int i = 0; i < NumberOfMeasurement; i++) {
-        RandomTime = random(RandomTimeLowerBound, RandomTimeUpperBound);
+        RandomTime = random(RandomTimeMinBound, RandomTimeMaxBound);
         if (TimeBetweenLightingUp == (-1))
             delay(RandomTime);
         else

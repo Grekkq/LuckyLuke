@@ -70,7 +70,7 @@ void setup() {
 
 void loop() {
     if (initializeTestFromWebFlag) {
-        InitializeTest(LightPin, ButtonPin, display, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb);
+        InitializeTest(LightPin, ButtonPin, display, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb);
         initializeTestFromWebFlag = false;
     }
 }

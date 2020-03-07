@@ -16,16 +16,7 @@
 
 <body>
     <br>
-    <form action="/get" id="settings">
-        <input type="text" name="ilosc" id="ilosc">
-        <br>
-        Czas <input type="text" name="czas" id="czas">
-        <br>
-        Od<input type="text" name="od" id="od">
-        <br>
-        Do<input type="text" name="do" id="do">
-        <br>
-    </form>
+
 
     <div class="container">
         <br />
@@ -67,7 +58,7 @@
         <div class="row">
             <div class="col">
                 <div class="center">
-                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Ustaw ilość pomiarów z zakresu od 1 do 20.">Ilość pomiarów: <span id="value"></span></a>
+                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Ustaw ilość pomiarów z zakresu od 1 do 20.">Ilość pobudzeń: <span id="value"></span></a>
                 </div>
                 <br />
                 <div class="slidecontainer">
@@ -80,7 +71,7 @@
             </div>
             <div class="col">
                 <div class="center">
-                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Wybierz czas zapalenia diody losowy bądź własny .">Czas zapalenia diody:</a>
+                    <a class="col_title" href="#" data-toggle="tooltip" data-placement="top" title="Wybierz czas zapalenia diody losowy bądź własny .">Czas pomiędzy zapaleniami diody:</a>
                 </div>
                 <br />
                 <div class="form-check">
@@ -88,9 +79,9 @@
                     <label class="form-check-label" for="exampleRadios1">
                         Losowy: od
                     </label>
-                    <input type="number" id="od_value" value="1000" min="1000" max="40000" step="10">
+                    <input type="number" id="od_value" value="1000" min="1000" max="40000" step="10" data-toggle="tooltip" data-placement="top" title="Wartość powinna być z przedziału od 1000 do 40000 ms">
                     <span class="suffix">do</span>
-                    <input type="number" id="do_value" value="40000" min="1000" max="40000" step="10">
+                    <input type="number" id="do_value" value="40000" min="1000" max="40000" step="10" data-toggle="tooltip" data-placement="top" title="Wartość powinna być z przedziału od 1000 do 40000 ms">
                 </div>
                 <br>
                 <div class="form-check">
@@ -98,14 +89,8 @@
                     <label class="form-check-label" for="exampleRadios2">
                         Własny:
                     </label>
-                    <input id="time" min="900" max="40000" type="number" step="10" value="1000" />
+                    <input id="time" min="1000" max="40000" type="number" step="10" value="1000" data-toggle="tooltip" data-placement="top" title="Wartość powinna być z przedziału od 1000 do 40000 ms" />
                     <span class="suffix">ms</span>
-
-                    <div >
-                        <p id="alert"></p>
-                        <br>
-                        <br>
-                    </div>
                 </div>
             </div>
         </div>
@@ -114,27 +99,24 @@
                 <br />
                 <br />
                 <div class="center">
-                    <button type="submit" class="btn btn-primary btn-lg" onclick="startTest()" form="settings">
+                    <button type="submit" class="btn btn-primary btn-lg" form="settings">
                         <i class="fas fa-user-md" style="font-size: 25px;"></i>
                         Rozpocznij badanie
                     </button>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div id="result" class="col">
-                <br />
-                <br />
-                <div class="center">
-                    <h4>Wyniki badania</h4>
-                    <canvas id="myChart"></canvas>
-                    <br />
-                    <h4>Średni czas reakcji:&nbsp;<span id="average"></span>&nbsp;ms</h4>
-                    <br />
-                    <br />
-                </div>
-            </div>
-        </div>
+        <!--Niewidzialny formularz-->
+        <form action="/get" id="settings">
+            <input type="text" name="ilosc" id="ilosc">
+            <br>
+            <input type="text" name="czas" id="czas">
+            <br>
+            <input type="text" name="od" id="od">
+            <br>
+            <input type="text" name="do" id="do">
+            <br>
+        </form>
     </div>
 
     <script>
@@ -148,8 +130,7 @@
         var from_value = document.getElementById("od_value");
         var to = document.getElementById("do");
         var to_value = document.getElementById("do_value");
-        var alert_field=document.getElementById("alert");
-
+        var alert_field = document.getElementById("alert");
 
         output.innerHTML = slider.value;
         document.getElementById("ilosc").value = slider.value;
@@ -170,21 +151,14 @@
         }
 
         own.onchange = function() {
-            var time=parseInt(own_value.value,10);
+
             time.value = own_value.value;
             from.value = "0";
             to.value = "0";
             from_value.disabled = true;
             to_value.disabled = true;
             own_value.disabled = false;
-            
-            if(time>40000){
-                alert_field.textContent="Wartość nie może być większa niż 40000 ms.";
-            }else if(time<1000){
-                alert_field.tex="Wartość nie może być mniejsza niż 1000 ms.";
-            }else{
-                alert_field.disabled=true;
-            }
+
         }
 
         random.onchange = function() {
@@ -209,86 +183,5 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
-        var ctx = document.getElementById("myChart").getContext("2d");
-        var chart = new Chart(ctx, {
-            type: "line",
-            data: {
-                //labels: ["1", "2", "3", "4", "5"],
-                datasets: [{
-                    label: "Wynik [ms]",
-                    backgroundColor: "#ACB382",
-                    //data: [446, 480, 460, 490, 500],
-                    showLine: false,
-                    pointStyle: 'circle',
-                    pointRadius: 7,
-                    pointHoverRadius: 12,
-                }]
-            },
-            options: {
-                legend: {
-                    display: false,
-                    position: "bottom"
-                },
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Czas reakcji [ms]",
-                            fontSize: 18,
-                            fontColor: '#017BFF',
-                            fontStyle: 'bold'
-                        },
-                        ticks: {
-                            //beginAtZero: true,
-                            //max: 600,
-                            //stepSize: 50,
-                            //min: 10,
-                            fontSize: 15,
-                            fontColor: '#017BFF',
-                            padding: 5,
-                        }
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            display: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Numer pomiaru",
-                            fontSize: 18,
-                            fontColor: '#017BFF',
-                            fontStyle: 'bold'
-                        },
-                        ticks: {
-                            fontSize: 15,
-                            fontColor: '#017BFF',
-                            padding: 5,
-                        }
-
-                    }]
-                }
-            }
-        });
-        var label = 1;
-        var sum = 0;
-
-        function addData(chart) {
-            var data = Math.floor(Math.random() * (500 - 400 + 1)) + 400;
-            chart.data.labels.push(label);
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.push(data);
-            });
-            chart.update();
-            label++;
-            sum += data;
-        }
-
-        function startTest() {
-            document.getElementById('result').style.display = "block";
-            while (label <= slider.value) {
-                addData(chart);
-            }
-            document.getElementById("average").innerHTML = Math.ceil(sum / slider.value);
-        }
     </script>
 </body></html>
