@@ -8,6 +8,7 @@ volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
 volatile int RandomTimeMinBoundFromWeb = 0;
 volatile int RandomTimeMaxBoundFromWeb = 0;
 volatile bool initializeTestFromWebFlag = false;
+volatile int *Score;
 // Stores time in miliseconds from button interrupt
 volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
@@ -79,10 +80,23 @@ void ConfigureWebpages(AsyncWebServer & server) {
         // request->send(SPIFFS, "/measurement.html", String(), false, processor);
         request->send(SPIFFS, "/measurement.html");
     });
+
+    server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.print("Test przycisku wez i mi daj te wyniki: ");
+        String response = String(NumberOfMesurementsFromWeb);
+        for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
+            response += "," + String(Score[i]);
+        }
+        // int str_len = response.length() + 1;
+        // char char_array[str_len];
+        // request->send_P(200, "text/plain", response.toCharArray(char_array, str_len) );
+        request->send_P(200, "text/plain", response.c_str() );
+
+    });
 }
 
-int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
-    int *Score = new int[NumberOfMeasurement];
+void InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
+    Score = new int[NumberOfMeasurement];
     int RandomTime = 0;
     unsigned long StartTime = 0, ElapsedTime = 0;
     Serial.println("Test Initialization");
@@ -104,5 +118,4 @@ int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int N
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
-    return Score;
 }
