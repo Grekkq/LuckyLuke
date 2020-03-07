@@ -24,16 +24,16 @@ int LightAndClockStart(int LightPin) {
 
 int LightAndClockStop(int LightPin, int ButtonPin) {
 
-    while (digitalRead(ButtonPin) == DefualtButtonPosition) {
-        ESP.wdtFeed();
-    }
-    digitalWrite(LightPin, !ShortedMosfet);
+    // while (digitalRead(ButtonPin) == DefualtButtonPosition) {
+    //     ESP.wdtFeed();
+    // }
+    // digitalWrite(LightPin, !ShortedMosfet);
     return millis();
 }
 
-int* InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
+int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
     // display.write('test\ntest');
-    int * Score = new int[NumberOfMeasurement];
+    int *Score = new int[NumberOfMeasurement];
     int RandomTime, StartTime, FinishTime = 0;
     for (int i = 0; i < NumberOfMeasurement; i++) {
         RandomTime = random(RandomTimeLowerBound, RandomTimeUpperBound);

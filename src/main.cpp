@@ -10,6 +10,9 @@
 #include <Wire.h>
 #include "SafeStorage.h"
 
+// button interrupt
+volatile int FinishTime = 0;
+
 int ilosc = 0;
 int czas = 0;
 
@@ -38,40 +41,41 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 String ledState;
 
-
 // Replaces placeholder with LED state value
-String processor(const String& var){
-  Serial.println(var);
-  if(var == "STATE"){
-    if(digitalRead(LightPin)){
-      ledState = "ON";
+String processor(const String &var) {
+    Serial.println(var);
+    if (var == "STATE") {
+        if (digitalRead(LightPin)) {
+            ledState = "ON";
+        } else {
+            ledState = "OFF";
+        }
+        Serial.println(ledState);
+        return ledState;
     }
-    else{
-      ledState = "OFF";
-    }
-    Serial.println(ledState);
-    return ledState;
-  }
 }
 
+void handleInterrupt() {
+    FinishTime = millis();
+    Serial.printf("Przerwanie zaszło xd");
+}
 
-void setup()
-{
+void setup() {
+    // print setup
     Serial.begin(115200);
-
     PinSetup(LightPin, ButtonPin);
+    attachInterrupt(digitalPinToInterrupt(ButtonPin), handleInterrupt, RISING);
+
     // display.clearDisplay();
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
 
-    if (!SPIFFS.begin())
-    {
+    if (!SPIFFS.begin()) {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
     }
 
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
-    {
+    while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.println("Connecting to WiFi..");
     }
@@ -98,39 +102,36 @@ void setup()
         digitalWrite(LightPin, LOW);
         request->send(SPIFFS, "/index.html", String(), false, processor);
     });
-    
-    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-      int paramsNr = request->params();
-      Serial.println(paramsNr);
 
-      // for(int i=0;i<paramsNr;i++){
-      //   AsyncWebParameter* p = request->getParam(i);
-      //   Serial.print("Param name: ");
-      //   Serial.println(p->name());
-      //   Serial.print("Param value: ");
-      //   Serial.println(p->value());
-      //   Serial.println("------");
-      // }
-      
-      ilosc=(request->getParam(0)->value()).toInt();
-      czas=(request->getParam(1)->value()).toInt();
-      Serial.println(ilosc);
-      Serial.println(czas);
+    server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
+        int paramsNr = request->params();
+        Serial.println(paramsNr);
 
-      
-      request->send(SPIFFS, "/measurement.html", String(), false,processor);
-      int * wyniki=InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
-      for(int i=0;i<ilosc;i++){
-          Serial.println(wyniki[i]);
-      }
+        // for(int i=0;i<paramsNr;i++){
+        //   AsyncWebParameter* p = request->getParam(i);
+        //   Serial.print("Param name: ");
+        //   Serial.println(p->name());
+        //   Serial.print("Param value: ");
+        //   Serial.println(p->value());
+        //   Serial.println("------");
+        // }
 
+        ilosc = (request->getParam(0)->value()).toInt();
+        czas = (request->getParam(1)->value()).toInt();
+        Serial.println(ilosc);
+        Serial.println(czas);
+
+        request->send(SPIFFS, "/measurement.html", String(), false, processor);
+        int *wyniki = InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
+        for (int i = 0; i < ilosc; i++) {
+            Serial.println(wyniki[i]);
+        }
     });
 
     server.begin();
 }
 
-void loop()
-{
+void loop() {
     // if(digitalRead(ButtonPin)==LOW) {
     //     digitalWrite(LightPin, HIGH);
     // } else
