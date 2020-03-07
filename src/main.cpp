@@ -11,7 +11,7 @@
 #include "SafeStorage.h"
 
 // button interrupt
-volatile int FinishTime = 0;
+// volatile int FinishTime = 0;
 
 int ilosc = 0;
 int czas = 0;
@@ -56,15 +56,12 @@ String processor(const String &var) {
 }
 
 
-void ICACHE_RAM_ATTR handleInterrupt() {
-    FinishTime = millis();
-}
+
 
 void setup() {
     // print setup
     Serial.begin(115200);
     PinSetup(LightPin, ButtonPin);
-    attachInterrupt(digitalPinToInterrupt(ButtonPin), handleInterrupt, RISING);
 
     // display.clearDisplay();
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
@@ -133,8 +130,6 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("Czas: ");
-    Serial.println(FinishTime);
     // if(digitalRead(ButtonPin)==LOW) {
     //     digitalWrite(LightPin, HIGH);
     // } else
@@ -151,7 +146,7 @@ void loop() {
     // delay(1000);
     // LightAndClockStart(LightPin);
     // LightAndClockStop(LightPin, ButtonPin);
-    // delay(1000);
-    // InitializeTest(LightPin, ButtonPin, display, 5, (-1));
-    // delay(5000);
+    delay(1000);
+    InitializeTest(LightPin, ButtonPin, display, 5, (-1));
+    delay(5000);
 }
