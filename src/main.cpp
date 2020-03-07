@@ -63,7 +63,12 @@ void setup() {
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
 
     // Configure file system
-    if(!SetupSPIFFS)
+    //  Serial.println("Startin SPIFFS...");
+    // if (!SPIFFS.begin()) {
+    //     Serial.println("An Error has occurred while mounting SPIFFS");
+    //     return;
+    // }
+    if(!SetupSPIFFS())
         return;
 
     SetupWiFi(ssid, password);
@@ -77,16 +82,7 @@ void setup() {
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/style.css", "text/css");
     });
-    // Route to set GPIO to HIGH
-    server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-        digitalWrite(LightPin, HIGH);
-        request->send(SPIFFS, "/index.html", String(), false, processor);
-    });
-    // Route to set GPIO to LOW
-    server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-        digitalWrite(LightPin, LOW);
-        request->send(SPIFFS, "/index.html", String(), false, processor);
-    });
+
 
     server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
         int paramsNr = request->params();
