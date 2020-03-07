@@ -17,10 +17,14 @@
 <body>
     <br>
     <form action="/get">
-    Ilość pomiarów <input type="text" name="ilosc">
+    <input type="text" name="ilosc" id="ilosc">
     <br>
-    Czas <input type="text" name="czas">
-        <br>
+    Czas <input type="text" name="czas" id="czas">
+    <br>
+    Od<input type="text" name="od" id="od">
+    <br>
+    Do<input type="text" name="do" id="do">
+    <br>
     <input type="submit" name="Submit">
     </form>
     <br>
@@ -85,18 +89,18 @@
                 </div>
                 <br />
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"/>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="losowy" value="-1"/>
                     <label class="form-check-label" for="exampleRadios1">
                         Losowy
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios2" id="exampleRadios1" value="option2" checked/>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="wlasny" value="option2" checked/>
                     <label class="form-check-label" for="exampleRadios2">
                         Własny
                     </label>
-                    <input id="time" min="1" max="99" type="number" step="1" value="3" />
-                    <span id="suffix">s</span>
+                    <input id="time" min="1000" max="40000" type="number" step="1" value="1000" />
+                    <span id="suffix">ms</span>
                 </div>
             </div>
         </div>
@@ -131,11 +135,33 @@
     <script>
         var slider = document.getElementById("myRange");
         var output = document.getElementById("value");
+        var time = document.getElementById("czas");
+        var own=document.getElementById("wlasny");
+        var own_value=document.getElementById("time");
+        var random=document.getElementById("losowy");
+        
+        
         output.innerHTML = slider.value;
-
+        document.getElementById("ilosc").value=slider.value;
+        czas.value=document.getElementById("time").value;
+        
         slider.oninput = function() {
             output.innerHTML = this.value;
+            document.getElementById("ilosc").value=slider.value;
         };
+        
+        own_value.oninput=function(){
+            time.value=own_value.value;
+        }
+        
+        own.onchange=function(){
+            time.value=own_value.value;
+        }
+        
+        random.onchange=function(){
+            time.value="-1";
+        }
+        
 
         $(document).ready(function() {
             $('[data-toggle="tooltip"]').tooltip();

@@ -52,7 +52,7 @@
 }
 
 #time {
-    width: 40px;
+    width: 70px;
     text-align: center;
     color: #ACB382;
     font-weight: bold;
@@ -134,4 +134,7 @@ h4 {
 
 #average {
     color: #ACB382;
+}
+
+#ilosc {
 }

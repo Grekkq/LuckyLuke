@@ -10,15 +10,14 @@
 #include <Wire.h>
 #include "SafeStorage.h"
 
-// button interrupt
-// volatile int FinishTime = 0;
-
-volatile int ilosc = 0;
-volatile int czas = 0;
-volatile bool starttest = false;
 // Pin Assigments
 #define LightPin D4
 #define ButtonPin D3
+
+// Holds values from Webpage
+volatile int NumberOfMesurementsFromWeb = 0;
+volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
+volatile bool initializeTestFromWebFlag = false;
 
 // WiFi config in SafeStorage.h Template:
 // #ifndef SAFESTORAGE_H
@@ -27,18 +26,18 @@ volatile bool starttest = false;
 // const char *ssid = "Koparka Apokalipsy";
 // const char *password = "xd";
 // #endif
-
 // Server Setup
 AsyncWebServer server(80);
 
-// Screen etup
+
+// Screen setup
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+// do usuniecia raczej
 String ledState;
 
 // Replaces placeholder with LED state value
@@ -55,36 +54,25 @@ String processor(const String &var) {
     }
 }
 
-
-
-
 void setup() {
-    // print setup
+    // Monitor Setup
     Serial.begin(115200);
     PinSetup(LightPin, ButtonPin);
 
     // display.clearDisplay();
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
-    
-    // Serwer WWW
-    if (!SPIFFS.begin()) {
-        Serial.println("An Error has occurred while mounting SPIFFS");
+
+    // Configure file system
+    if(!SetupSPIFFS)
         return;
-    }
 
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.println("Connecting to WiFi..");
-    }
-
+    SetupWiFi(ssid, password);
     Serial.println(WiFi.localIP());
 
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/index.html", String(), false, processor);
     });
-
     // Route to load style.css file
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/style.css", "text/css");
@@ -94,7 +82,6 @@ void setup() {
         digitalWrite(LightPin, HIGH);
         request->send(SPIFFS, "/index.html", String(), false, processor);
     });
-
     // Route to set GPIO to LOW
     server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
         digitalWrite(LightPin, LOW);
@@ -114,11 +101,11 @@ void setup() {
         //   Serial.println("------");
         // }
 
-        ilosc = (request->getParam(0)->value()).toInt();
-        czas = (request->getParam(1)->value()).toInt();
-        Serial.println(ilosc);
-        Serial.println(czas);
-        starttest = true;
+        NumberOfMesurementsFromWeb = (request->getParam(0)->value()).toInt();
+        TimeBetweenLightingUpDiodeFromWeb = (request->getParam(1)->value()).toInt();
+        Serial.println(NumberOfMesurementsFromWeb);
+        Serial.println(TimeBetweenLightingUpDiodeFromWeb);
+        initializeTestFromWebFlag = true;
         request->send(SPIFFS, "/measurement.html", String(), false, processor);
     });
 
@@ -145,8 +132,8 @@ void loop() {
     // delay(1000);
     // InitializeTest(LightPin, ButtonPin, display, 5, (-1));
     // delay(5000);
-    if (starttest) {
-        InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
-        starttest = false;
+    if (initializeTestFromWebFlag) {
+        InitializeTest(LightPin, ButtonPin, display, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb);
+        initializeTestFromWebFlag = false;
     }
 }
