@@ -102,7 +102,7 @@ h3 {
     
 }
 
-#suffix {
+.suffix {
     color: #017BFF;
     font-weight: bold;
     font-size: 18px;
@@ -137,4 +137,27 @@ h4 {
 }
 
 #ilosc {
+}
+
+#od_value {
+    width: 70px;
+    text-align: center;
+    color: #ACB382;
+    font-weight: bold;
+    font-size: 17px;
+}
+}
+
+
+
+#do_span {
+    color: beige;
+}
+
+#do_value {
+    width: 70px;
+    text-align: center;
+    color: #ACB382;
+    font-weight: bold;
+    font-size: 17px;
 }

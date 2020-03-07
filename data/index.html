@@ -16,16 +16,15 @@
 
 <body>
     <br>
-    <form action="/get">
-    <input type="text" name="ilosc" id="ilosc">
-    <br>
-    Czas <input type="text" name="czas" id="czas">
-    <br>
-    Od<input type="text" name="od" id="od">
-    <br>
-    Do<input type="text" name="do" id="do">
-    <br>
-    <input type="submit" name="Submit">
+    <form action="/get" id="settings">
+        <input type="text" name="ilosc" id="ilosc">
+        <br>
+        Czas <input type="text" name="czas" id="czas">
+        <br>
+        Od<input type="text" name="od" id="od">
+        <br>
+        Do<input type="text" name="do" id="do">
+        <br>
     </form>
 
     <div class="container">
@@ -85,18 +84,28 @@
                 </div>
                 <br />
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="losowy" value="-1"/>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="losowy" value="-1" />
                     <label class="form-check-label" for="exampleRadios1">
-                        Losowy
+                        Losowy: od
                     </label>
+                    <input type="number" id="od_value" value="1000" min="1000" max="40000" step="10">
+                    <span class="suffix">do</span>
+                    <input type="number" id="do_value" value="40000" min="1000" max="40000" step="10">
                 </div>
+                <br>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="wlasny" value="option2" checked/>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="wlasny" value="option2" checked />
                     <label class="form-check-label" for="exampleRadios2">
-                        Własny
+                        Własny:
                     </label>
-                    <input id="time" min="1000" max="40000" type="number" step="1" value="1000" />
-                    <span id="suffix">ms</span>
+                    <input id="time" min="900" max="40000" type="number" step="10" value="1000" />
+                    <span class="suffix">ms</span>
+
+                    <div >
+                        <p id="alert"></p>
+                        <br>
+                        <br>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,7 +114,7 @@
                 <br />
                 <br />
                 <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg" onclick="startTest()">
+                    <button type="submit" class="btn btn-primary btn-lg" onclick="startTest()" form="settings">
                         <i class="fas fa-user-md" style="font-size: 25px;"></i>
                         Rozpocznij badanie
                     </button>
@@ -132,32 +141,69 @@
         var slider = document.getElementById("myRange");
         var output = document.getElementById("value");
         var time = document.getElementById("czas");
-        var own=document.getElementById("wlasny");
-        var own_value=document.getElementById("time");
-        var random=document.getElementById("losowy");
-        
-        
+        var own = document.getElementById("wlasny");
+        var own_value = document.getElementById("time");
+        var random = document.getElementById("losowy");
+        var from = document.getElementById("od");
+        var from_value = document.getElementById("od_value");
+        var to = document.getElementById("do");
+        var to_value = document.getElementById("do_value");
+        var alert_field=document.getElementById("alert");
+
+
         output.innerHTML = slider.value;
-        document.getElementById("ilosc").value=slider.value;
-        czas.value=document.getElementById("time").value;
-        
+        document.getElementById("ilosc").value = slider.value;
+        czas.value = document.getElementById("time").value;
+        from.value = "0";
+        to.value = "0";
+        from_value.disabled = true;
+        to_value.disabled = true;
+
+
         slider.oninput = function() {
             output.innerHTML = this.value;
-            document.getElementById("ilosc").value=slider.value;
+            document.getElementById("ilosc").value = slider.value;
         };
-        
-        own_value.oninput=function(){
-            time.value=own_value.value;
+
+        own_value.oninput = function() {
+            time.value = own_value.value;
         }
-        
-        own.onchange=function(){
-            time.value=own_value.value;
+
+        own.onchange = function() {
+            var time=parseInt(own_value.value,10);
+            time.value = own_value.value;
+            from.value = "0";
+            to.value = "0";
+            from_value.disabled = true;
+            to_value.disabled = true;
+            own_value.disabled = false;
+            
+            if(time>40000){
+                alert_field.textContent="Wartość nie może być większa niż 40000 ms.";
+            }else if(time<1000){
+                alert_field.tex="Wartość nie może być mniejsza niż 1000 ms.";
+            }else{
+                alert_field.disabled=true;
+            }
         }
-        
-        random.onchange=function(){
-            time.value="-1";
+
+        random.onchange = function() {
+            time.value = "-1";
+            from.value = from_value.value;
+            to.value = to_value.value;
+            from_value.disabled = false;
+            to_value.disabled = false;
+            own_value.disabled = true;
         }
-        
+
+        from_value.onchange = function() {
+            from.value = from_value.value;
+        }
+
+        to_value.onchange = function() {
+            to.value = to_value.value;
+        }
+
 
         $(document).ready(function() {
             $('[data-toggle="tooltip"]').tooltip();
@@ -244,8 +290,5 @@
             }
             document.getElementById("average").innerHTML = Math.ceil(sum / slider.value);
         }
-
     </script>
-</body>
-
-</html>
+</body></html>

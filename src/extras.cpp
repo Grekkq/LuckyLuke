@@ -1,20 +1,21 @@
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
+#include "extras.h"
 
+volatile int NumberOfMesurementsFromWeb = 0;
+volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
+volatile bool initializeTestFromWebFlag = false;
 // Stores time in miliseconds from button interrupt
 volatile unsigned long FinishTime = 0;
-
 volatile bool InterruptFlag = 0;
 
-#define LightPin D4
+
+#define EdgeOnButtonPress RISING
+#define ShortedMosfet HIGH
 // time between lighting up in miliseconds
 #define RandomTimeLowerBound 3000
 #define RandomTimeUpperBound 7000
-// default button position
-#define DefualtButtonPosition LOW
-// mosfet activation
-#define ShortedMosfet HIGH
 
 void ICACHE_RAM_ATTR doOnButtonClick() {
     FinishTime = millis();
@@ -46,20 +47,39 @@ void SetupWiFi(const char * ssid, const char * password) {
 unsigned long LightAndClockStart(int LightPin,  int ButtonPin) {
     unsigned long current = millis();
     digitalWrite(LightPin, ShortedMosfet);
-    attachInterrupt(digitalPinToInterrupt(ButtonPin), doOnButtonClick, RISING);
+    attachInterrupt(digitalPinToInterrupt(ButtonPin), doOnButtonClick, EdgeOnButtonPress);
     InterruptFlag = false;
     return current;
 }
 
-int LightAndClockStop(int LightPin, int ButtonPin) {
-    digitalWrite(LightPin, !ShortedMosfet);
-    return millis();
+void ConfigureWebpages(AsyncWebServer & server) {
+    // Route for root / web page
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        // request->send(SPIFFS, "/index.html", String(), false, processor);
+        request->send(SPIFFS, "/index.html");
+    });
+    // Route to load style.css file
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/style.css", "text/css");
+    });
+    // Route to initialize test and redirecting to waiting page
+    server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
+        NumberOfMesurementsFromWeb = (request->getParam(0)->value()).toInt();
+        TimeBetweenLightingUpDiodeFromWeb = (request->getParam(1)->value()).toInt();
+        Serial.print("NumberOfMesurementsFromWeb: ");
+        Serial.println(NumberOfMesurementsFromWeb);
+        Serial.print("TimeBetweenLightingUpDiodeFromWeb: ");
+        Serial.println(TimeBetweenLightingUpDiodeFromWeb);
+        initializeTestFromWebFlag = true;
+        // request->send(SPIFFS, "/measurement.html", String(), false, processor);
+        request->send(SPIFFS, "/measurement.html");
+    });
 }
 
 int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
     int *Score = new int[NumberOfMeasurement];
     int RandomTime = 0;
-    unsigned long StartTime = 0, wynik = 0;
+    unsigned long StartTime = 0, ElapsedTime = 0;
     Serial.println("Test Initialization");
     for (int i = 0; i < NumberOfMeasurement; i++) {
         RandomTime = random(RandomTimeLowerBound, RandomTimeUpperBound);
@@ -74,10 +94,10 @@ int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int N
             delay(0);
         }
         digitalWrite(LightPin, !ShortedMosfet);
-        wynik = FinishTime - StartTime;
-        Serial.println(wynik);
-        Score[i] = (FinishTime - StartTime);
-        Serial.println(Score[i]);
+        ElapsedTime = FinishTime - StartTime;
+        Serial.print("Elapsed Time: ");
+        Serial.println(ElapsedTime);
+        Score[i] = (ElapsedTime);
     }
     return Score;
 }
