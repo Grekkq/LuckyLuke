@@ -13,9 +13,9 @@
 // button interrupt
 // volatile int FinishTime = 0;
 
-int ilosc = 0;
-int czas = 0;
-
+volatile int ilosc = 0;
+volatile int czas = 0;
+volatile bool starttest = false;
 // Pin Assigments
 #define LightPin D4
 #define ButtonPin D3
@@ -66,67 +66,63 @@ void setup() {
     // display.clearDisplay();
     // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
     
-    //Serwer WWW
-    // if (!SPIFFS.begin()) {
-    //     Serial.println("An Error has occurred while mounting SPIFFS");
-    //     return;
-    // }
+    // Serwer WWW
+    if (!SPIFFS.begin()) {
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return;
+    }
 
-    // WiFi.begin(ssid, password);
-    // while (WiFi.status() != WL_CONNECTED) {
-    //     delay(1000);
-    //     Serial.println("Connecting to WiFi..");
-    // }
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi..");
+    }
 
-    // Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP());
 
-    // // Route for root / web page
-    // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     request->send(SPIFFS, "/index.html", String(), false, processor);
-    // });
+    // Route for root / web page
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
 
-    // // Route to load style.css file
-    // server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     request->send(SPIFFS, "/style.css", "text/css");
-    // });
-    // // Route to set GPIO to HIGH
-    // server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     digitalWrite(LightPin, HIGH);
-    //     request->send(SPIFFS, "/index.html", String(), false, processor);
-    // });
+    // Route to load style.css file
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/style.css", "text/css");
+    });
+    // Route to set GPIO to HIGH
+    server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+        digitalWrite(LightPin, HIGH);
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
 
-    // // Route to set GPIO to LOW
-    // server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     digitalWrite(LightPin, LOW);
-    //     request->send(SPIFFS, "/index.html", String(), false, processor);
-    // });
+    // Route to set GPIO to LOW
+    server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+        digitalWrite(LightPin, LOW);
+        request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
 
-    // server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     int paramsNr = request->params();
-    //     Serial.println(paramsNr);
+    server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
+        int paramsNr = request->params();
+        Serial.println(paramsNr);
 
-    //     // for(int i=0;i<paramsNr;i++){
-    //     //   AsyncWebParameter* p = request->getParam(i);
-    //     //   Serial.print("Param name: ");
-    //     //   Serial.println(p->name());
-    //     //   Serial.print("Param value: ");
-    //     //   Serial.println(p->value());
-    //     //   Serial.println("------");
-    //     // }
+        // for(int i=0;i<paramsNr;i++){
+        //   AsyncWebParameter* p = request->getParam(i);
+        //   Serial.print("Param name: ");
+        //   Serial.println(p->name());
+        //   Serial.print("Param value: ");
+        //   Serial.println(p->value());
+        //   Serial.println("------");
+        // }
 
-    //     ilosc = (request->getParam(0)->value()).toInt();
-    //     czas = (request->getParam(1)->value()).toInt();
-    //     Serial.println(ilosc);
-    //     Serial.println(czas);
+        ilosc = (request->getParam(0)->value()).toInt();
+        czas = (request->getParam(1)->value()).toInt();
+        Serial.println(ilosc);
+        Serial.println(czas);
+        starttest = true;
+        request->send(SPIFFS, "/measurement.html", String(), false, processor);
+    });
 
-    //     request->send(SPIFFS, "/measurement.html", String(), false, processor);
-    //     int *wyniki = InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
-    //     for (int i = 0; i < ilosc; i++) {
-    //         Serial.println(wyniki[i]);
-    //     }
-    // });
-
-    // server.begin();
+    server.begin();
 }
 
 void loop() {
@@ -146,7 +142,11 @@ void loop() {
     // delay(1000);
     // LightAndClockStart(LightPin);
     // LightAndClockStop(LightPin, ButtonPin);
-    delay(1000);
-    InitializeTest(LightPin, ButtonPin, display, 5, (-1));
-    delay(5000);
+    // delay(1000);
+    // InitializeTest(LightPin, ButtonPin, display, 5, (-1));
+    // delay(5000);
+    if (starttest) {
+        InitializeTest(LightPin, ButtonPin, display, ilosc, czas);
+        starttest = false;
+    }
 }

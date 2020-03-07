@@ -1,7 +1,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
-volatile int FinishTime = 0;
+volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
 #define LightPin D4
 // time between lighting up in miliseconds
@@ -24,11 +24,12 @@ void PinSetup(int LightPin, int ButtonPin) {
     pinMode(ButtonPin, INPUT_PULLUP);
 }
 
-int LightAndClockStart(int LightPin,  int ButtonPin) {
+unsigned long LightAndClockStart(int LightPin,  int ButtonPin) {
+    unsigned long current = millis();
     digitalWrite(LightPin, ShortedMosfet);
     attachInterrupt(digitalPinToInterrupt(ButtonPin), handleInterrupt, RISING);
     InterruptFlag = false;
-    return millis();
+    return current;
 }
 
 int LightAndClockStop(int LightPin, int ButtonPin) {
@@ -41,9 +42,9 @@ int LightAndClockStop(int LightPin, int ButtonPin) {
 }
 
 int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp) {
-    // display.write('test\ntest');
     int *Score = new int[NumberOfMeasurement];
-    int RandomTime, StartTime = 0;
+    int RandomTime = 0;
+    unsigned long StartTime = 0, wynik = 0;
     Serial.println("Test start");
     for (int i = 0; i < NumberOfMeasurement; i++) {
         RandomTime = random(RandomTimeLowerBound, RandomTimeUpperBound);
@@ -55,8 +56,10 @@ int *InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int N
         Serial.println("Dioda ON");
         StartTime = LightAndClockStart(LightPin, ButtonPin);
         while (!InterruptFlag) {
-        delay(1);
+        delay(0);
         }
+        wynik = FinishTime - StartTime;
+        Serial.println(wynik);
         Score[i] = (FinishTime - StartTime);
         Serial.println(Score[i]);
     }
