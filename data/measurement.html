@@ -2,28 +2,157 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Untitled Document</title>
+    <title>Project</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
 <body>
-    <form action="/get">
-        <input type="button" value="Przejdź do wyników" onclick="get_result()" id="resultButton" />
-        <br />
-        <br />
-        <canvas id="myChart"></canvas>
-    </form>
+    <div class="container">
+        <div class="row" id="loadingSection">
+            <div class="col">
+                <div class="center">
+                    <br>
+                    <span class="col_title">Trwa badanie</span><span id="wait" class="col_title"> .</span>
+                </div>
+                <div class="center">
+                    <span class="col_title">Postępuj zgodnie z instrukacjami wyświetlanymi na ekranie urządzenia
+                    </span>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" id="resultButton">
+            <div class="col">
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg" form="settings" data-toggle="modal" data-target="#exampleModalCenter">
+                        <i class="fas fa-poll" style="font-size: 25px;"></i>
+                        Wyświetl wyniki
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="resultSection2">
+            <div class="col">
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <a class="link" href="index.html">
+                            <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
+                            Badanie
+                        </a>
+                    </button>
+                </div>
+            </div>
+            <div class="col">
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <a class="link" href="about.html">
+                            <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
+                            O projekcie
+                        </a>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row h-25" id="resultSection">
+            <div class="col">
+                <div class="center">
+                    <h4>Wyniki badania</h4>
+                    <canvas id="myChart" width="20%" height="10%"></canvas>
+                    <br />
+                    <br>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" id="resultSection1">
+            <div class="col">
+                <div>
+                    <h4>Średni czas reakcji:&nbsp;<span id="average"></span>&nbsp;ms</h4>
+                </div>
+                <div>
+                    <h4>Wariancja:&nbsp;<span id="variance"></span>&nbsp;ms</h4>
+                </div>
+
+                <div>
+                    <h4>Odchylenie standardowe:&nbsp;<span id="deviation"></span>&nbsp;ms</h4>
+                </div>
+            </div>
+            <div class="col">
+                <div class="center">
+                    Tu
+                </div>
+                <div class="center">
+                    będzie
+                </div>
+                <div class="center">
+                    tabela
+                </div>
+                <div class="center">
+                    z
+                </div>
+                <div class="center">
+                    wynikami
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Uwaga!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Przed kliknieciem przycisku "Wyświetl wyniki" upewnij się, że zostały wykonane wszyskie pomiary, a na ekranie urządzenia widnieje napis "Zakończono badanie".
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="get_results()">Wyświetl wyniki</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <canvas id="myChart"></canvas>
     <script>
+        var dots = window.setInterval(function() {
+            var wait = document.getElementById("wait");
+            if (wait.innerHTML.length > 5)
+                wait.innerHTML = "";
+            else
+                wait.innerHTML += ".";
+        }, 500);
+
+
+        var chartSection = document.getElementById("resultSection");
+        var chartSection1 = document.getElementById("resultSection1");
+        var chartSection2 = document.getElementById("resultSection2");
+        chartSection.style.display = "none";
+        chartSection1.style.display = "none";
+        chartSection2.style.display="none";
+
+        //-------------------ChartJS----------------------------------
         var ctx = document.getElementById("myChart").getContext("2d");
         var chart = new Chart(ctx, {
             type: "line",
             data: {
-                //labels: ["1", "2", "3", "4", "5"],
                 datasets: [{
                     label: "Wynik [ms]",
                     backgroundColor: "#ACB382",
-                    //data: [446, 480, 460, 490, 500],
                     showLine: false,
                     pointStyle: "circle",
                     pointRadius: 7,
@@ -75,8 +204,6 @@
             }
         });
 
-        //var label = 1;
-
         function addData(chart, label, data) {
             chart.data.labels.push(label);
             chart.data.datasets.forEach((dataset) => {
@@ -85,40 +212,66 @@
             chart.update();
         }
 
+        //-----------------------------------------------------
 
-        /*function test() {
-            var data = "5,2,1,3,4,5";
-            var dataArr = data.split(",");
-            console.log(dataArr);
-            var ilosc_pomiarow = parseInt(dataArr[0], 10);
-            for (var i = 1; i <= ilosc_pomiarow; i++) {
-                addData(chart, label, parseInt(dataArr[i], 10));
-                label++;
-            }
-        }*/
+        function del() {
+            var elem = document.getElementById("loadingSection");
+            var elem2 = document.getElementById("resultButton");
+            elem.style.display = "none";
+            elem2.style.display = "none";
+        }
 
-        function get_result() {
+        function variance(values) {
+            var avg = average(values);
+
+            var squareDiffs = values.map(function(value) {
+                var diff = value - avg;
+                var sqrDiff = diff * diff;
+                return sqrDiff;
+            });
+
+            var avgSquareDiff = average(squareDiffs);
+
+            var stdDev = Math.sqrt(avgSquareDiff);
+            return avgSquareDiff;
+        }
+
+        function average(data) {
+            var sum = data.reduce(function(sum, value) {
+                return sum + value;
+            }, 0);
+            var avg = sum / data.length;
+            return avg;
+        }
+
+        function get_results() {
+            del();
+            chartSection.style.display = "flex";
+            chartSection1.style.display = "flex";
+            chartSection2.style.display="flex";
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("resultButton").style.display =
-                        "none";
+                    var avgLabel = document.getElementById("average");
+                    var varLabel = document.getElementById("variance");
+                    var devLabel = document.getElementById("deviation");
                     var data = this.responseText;
-                    var dataArr = data.split(",");
+                    var dataArr = data.split(',').map(x => +x);
                     console.log(dataArr);
                     var ilosc_pomiarow = parseInt(dataArr[0], 10);
+                    dataArr.shift();
                     var label = 1;
-                    for (var i = 1; i <= ilosc_pomiarow; i++) {
-                        addData(chart, label, parseInt(dataArr[i], 10));
+                    for (var i = 0; i < ilosc_pomiarow; i++) {
+                        addData(chart, label, dataArr[i]);
                         label++;
                     }
+                    avgLabel.innerHTML = average(dataArr).toFixed(2);
+                    varLabel.innerHTML = variance(dataArr).toFixed(2);
+                    devLabel.innerHTML = Math.sqrt(variance(dataArr)).toFixed(2);
                 }
             };
             xhttp.open("GET", "/times", true);
             xhttp.send();
         }
-
     </script>
-</body>
-
-</html>
+</body></html>

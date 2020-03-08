@@ -63,10 +63,6 @@
     margin-left: 30%;
 }
 
-.col{
-}
-
-
 .link {
     color: white
 }
@@ -146,9 +142,6 @@ h4 {
     font-weight: bold;
     font-size: 17px;
 }
-}
-
-
 
 #do_span {
     color: beige;
@@ -172,4 +165,32 @@ h4 {
 
 #do {
     display: none;
+}
+
+#resultButton {
+    color: #017BFF;
+}
+
+#loadingSection {
+        color: #017BFF;
+}
+
+#deviation {
+     color: #ACB382;
+}
+
+#variance {
+         color: #ACB382;
+}
+
+#myChart {
+}
+
+#chart {
+    width: 40%;
+    height: 40%;
+}
+
+#res {
+    float: left;
 }
