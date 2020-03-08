@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <head>
+
+<head>
     <meta charset="UTF-8" />
     <title>Untitled Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -9,8 +10,8 @@
 <body>
     <form action="/get">
         <input type="button" value="Przejdź do wyników" onclick="get_result()" id="resultButton" />
-        <br>
-        <br>
+        <br />
+        <br />
         <canvas id="myChart"></canvas>
     </form>
     <script>
@@ -24,9 +25,9 @@
                     backgroundColor: "#ACB382",
                     //data: [446, 480, 460, 490, 500],
                     showLine: false,
-                    pointStyle: 'circle',
+                    pointStyle: "circle",
                     pointRadius: 7,
-                    pointHoverRadius: 12,
+                    pointHoverRadius: 12
                 }]
             },
             options: {
@@ -40,8 +41,8 @@
                             display: true,
                             labelString: "Czas reakcji [ms]",
                             fontSize: 18,
-                            fontColor: '#017BFF',
-                            fontStyle: 'bold'
+                            fontColor: "#017BFF",
+                            fontStyle: "bold"
                         },
                         ticks: {
                             //beginAtZero: true,
@@ -49,8 +50,8 @@
                             //stepSize: 50,
                             //min: 10,
                             fontSize: 15,
-                            fontColor: '#017BFF',
-                            padding: 5,
+                            fontColor: "#017BFF",
+                            padding: 5
                         }
                     }],
                     xAxes: [{
@@ -61,48 +62,63 @@
                             display: true,
                             labelString: "Numer pomiaru",
                             fontSize: 18,
-                            fontColor: '#017BFF',
-                            fontStyle: 'bold'
+                            fontColor: "#017BFF",
+                            fontStyle: "bold"
                         },
                         ticks: {
                             fontSize: 15,
-                            fontColor: '#017BFF',
-                            padding: 5,
+                            fontColor: "#017BFF",
+                            padding: 5
                         }
-
                     }]
                 }
             }
         });
 
+        //var label = 1;
 
-        function addData(chart,data) {
+        function addData(chart, label, data) {
             chart.data.labels.push(label);
             chart.data.datasets.forEach((dataset) => {
                 dataset.data.push(data);
             });
             chart.update();
-            label++;
-            sum += data;
         }
+
+
+        /*function test() {
+            var data = "5,2,1,3,4,5";
+            var dataArr = data.split(",");
+            console.log(dataArr);
+            var ilosc_pomiarow = parseInt(dataArr[0], 10);
+            for (var i = 1; i <= ilosc_pomiarow; i++) {
+                addData(chart, label, parseInt(dataArr[i], 10));
+                label++;
+            }
+        }*/
 
         function get_result() {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    
-                    document.getElementById("resultButton").style.display="none";
-                    
+                    document.getElementById("resultButton").style.display =
+                        "none";
                     var data = this.responseText;
-                    alert(data);
-                    var dataArr = data.split(',');
-                    var label = 1;
+                    var dataArr = data.split(",");
+                    console.log(dataArr);
                     var ilosc_pomiarow = parseInt(dataArr[0], 10);
-
+                    var label = 1;
+                    for (var i = 1; i <= ilosc_pomiarow; i++) {
+                        addData(chart, label, parseInt(dataArr[i], 10));
+                        label++;
+                    }
                 }
             };
             xhttp.open("GET", "/times", true);
             xhttp.send();
         }
+
     </script>
-</body></html>
+</body>
+
+</html>
