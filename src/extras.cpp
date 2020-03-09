@@ -86,9 +86,10 @@ void ConfigureWebpages(AsyncWebServer & server) {
 
     server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
         u8x8p.clearDisplay();
-        u8x8p.drawString(0, 0, " Kolejny pomiar");
-        u8x8p.drawString(0, 2, "kliknij przycisk");
-        u8x8p.drawString(0, 5, " \"Nowe Badanie\"");
+        u8x8p.drawString(0, 0, "  By rozpoczac  ");
+        u8x8p.drawString(0, 2, " kolejny pomiar ");
+        u8x8p.drawString(0, 4, "kliknij przycisk");
+        u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
         Serial.print("Test przycisku wez i mi daj te wyniki: ");
         String response = String(NumberOfMesurementsFromWeb);
         for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
@@ -98,6 +99,10 @@ void ConfigureWebpages(AsyncWebServer & server) {
     });
 
     server.on("/home", HTTP_GET, [](AsyncWebServerRequest *request) {
+        u8x8p.clearDisplay();
+        u8x8p.drawString(0, 0, "Ustaw parametry ");
+        u8x8p.drawString(0, 3, " i rozpocznij   ");
+        u8x8p.drawString(0, 6, "kolejne badanie ");
         request->send(SPIFFS, "/index.html");
     });
 
@@ -134,6 +139,8 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Score[i] = (ElapsedTime);
     }
     u8x8p.clearDisplay();
-    u8x8p.drawString(0, 2, "   Zakonczono");
-    u8x8p.drawString(0, 4, "    Badanie");
+    u8x8p.drawString(0, 0, "   Zakonczono   ");
+    u8x8p.drawString(0, 2, "    badanie     ");
+    u8x8p.drawString(0, 4, "   przejdz do   ");
+    u8x8p.drawString(0, 6, "    wynikow     ");
 }

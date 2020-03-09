@@ -194,3 +194,8 @@ h4 {
 #res {
     float: left;
 }
+
+.buttons,.buttons:hover {
+    text-decoration: none;
+    color: white;
+}

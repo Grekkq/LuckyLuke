@@ -45,9 +45,9 @@ void setup() {
     initializeTestFromWebFlag = false;
 
     u8x8.setFont(u8x8_font_8x13_1x2_f );
-    u8x8.drawString(0, 0, " Aby rozpoczac ");
-    u8x8.drawString(0, 2, "wejdz na strone:");
-    u8x8.drawString(0, 5, (" " + WiFi.localIP().toString()).c_str());
+    u8x8.drawString(0, 0, " Aby rozpoczac  ");
+    u8x8.drawString(0, 3, "wejdz na strone:");
+    u8x8.drawString(0, 6, ("  " + WiFi.localIP().toString()).c_str());
 }
 
 void loop() {
