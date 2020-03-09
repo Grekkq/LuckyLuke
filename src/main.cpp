@@ -24,7 +24,6 @@
 // Server Setup
 AsyncWebServer server(80);
 
-
 // Screen setup
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -54,11 +53,15 @@ void setup() {
 
     PinSetup(LightPin, ButtonPin);
 
-    // display.clearDisplay();
-    // display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
-
+    display.clearDisplay();
+    display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
+    for (int i = 0; i < display.height(); i += 4) {
+        display.drawLine(0, 0, display.width() - 1, i, WHITE);
+        display.display();
+        delay(1);
+    }
     // File system
-    if(!SetupSPIFFS())
+    if (!SetupSPIFFS())
         return;
 
     SetupWiFi(ssid, password);
