@@ -39,36 +39,10 @@
                 </div>
             </div>
         </div>
-        <div class="row" id="resultSection2">
-            <div class="col">
-                <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <a class="link" href="index.html">
-                            <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
-                            Badanie
-                        </a>
-                    </button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <a class="link" href="about.html">
-                            <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
-                            O projekcie
-                        </a>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <br>
         <div class="row h-25" id="resultSection">
             <div class="col">
                 <div class="center">
-                    <h4>Wyniki badania</h4>
-                    <canvas id="myChart" width="20%" height="10%"></canvas>
-                    <br />
-                    <br>
+                    <h4><b>Wyniki badania</b></h4>
                 </div>
             </div>
         </div>
@@ -104,6 +78,26 @@
                 </div>
             </div>
         </div>
+        <br>
+        <br>
+        <div class="row" id="resultSection3">
+            <div class="col">
+                <canvas id="myChart" width="20%" height="10%"></canvas>
+            </div>
+        </div>
+        <br>
+        <div class="row" id="resultSection2">
+            <div class="col">
+                <div class="center">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <a class="link" href="index.html">
+                            <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
+                            Nowe badanie
+                        </a>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -125,9 +119,6 @@
             </div>
         </div>
     </div>
-
-    <br>
-    <canvas id="myChart"></canvas>
     <script>
         var dots = window.setInterval(function() {
             var wait = document.getElementById("wait");
@@ -141,9 +132,11 @@
         var chartSection = document.getElementById("resultSection");
         var chartSection1 = document.getElementById("resultSection1");
         var chartSection2 = document.getElementById("resultSection2");
+        var chartSection3 = document.getElementById("resultSection3");
         chartSection.style.display = "none";
         chartSection1.style.display = "none";
-        chartSection2.style.display="none";
+        chartSection2.style.display = "none";
+        chartSection3.style.display = "none";
 
         //-------------------ChartJS----------------------------------
         var ctx = document.getElementById("myChart").getContext("2d");
@@ -214,7 +207,7 @@
 
         //-----------------------------------------------------
 
-        function del() {
+        function hide() {
             var elem = document.getElementById("loadingSection");
             var elem2 = document.getElementById("resultButton");
             elem.style.display = "none";
@@ -245,10 +238,11 @@
         }
 
         function get_results() {
-            del();
+            hide();
             chartSection.style.display = "flex";
             chartSection1.style.display = "flex";
-            chartSection2.style.display="flex";
+            chartSection2.style.display = "flex";
+            chartSection3.style.display = "flex";
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
