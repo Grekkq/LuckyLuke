@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include "extras.h"
+#include <U8x8lib.h>
 
 volatile int NumberOfMesurementsFromWeb = 0;
 volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
@@ -12,6 +13,7 @@ volatile int *Score;
 // Stores time in miliseconds from button interrupt
 volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
+U8X8_SH1106_128X64_NONAME_HW_I2C u8x8p(U8X8_PIN_NONE);
 
 
 #define EdgeOnButtonPress RISING
@@ -25,6 +27,8 @@ void ICACHE_RAM_ATTR doOnButtonClick() {
 void PinSetup(int LightPin, int ButtonPin) {
     pinMode(LightPin, OUTPUT);
     pinMode(ButtonPin, INPUT_PULLUP);
+    u8x8p.begin();
+    u8x8p.setFont(u8x8_font_8x13_1x2_f );
 }
 
 bool SetupSPIFFS() {
@@ -55,7 +59,7 @@ unsigned long LightAndClockStart(int LightPin,  int ButtonPin) {
 void ConfigureWebpages(AsyncWebServer & server) {
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        // request->send(SPIFFS, "/index.html", String(), false, processor);
+        
         request->send(SPIFFS, "/index.html");
     });
     // Route to load style.css file
@@ -77,30 +81,41 @@ void ConfigureWebpages(AsyncWebServer & server) {
         Serial.print("RandomTimeMaxBoundFromWeb: ");
         Serial.println(RandomTimeMaxBoundFromWeb);
         initializeTestFromWebFlag = true;
-        // request->send(SPIFFS, "/measurement.html", String(), false, processor);
         request->send(SPIFFS, "/measurement.html");
     });
 
     server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
+        u8x8p.clearDisplay();
+        u8x8p.drawString(0, 0, " Kolejny pomiar");
+        u8x8p.drawString(0, 2, "kliknij przycisk");
+        u8x8p.drawString(0, 5, " \"Nowe Badanie\"");
         Serial.print("Test przycisku wez i mi daj te wyniki: ");
         String response = String(NumberOfMesurementsFromWeb);
         for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
             response += "," + String(Score[i]);
         }
-        // int str_len = response.length() + 1;
-        // char char_array[str_len];
-        // request->send_P(200, "text/plain", response.toCharArray(char_array, str_len) );
         request->send_P(200, "text/plain", response.c_str() );
+    });
 
+    server.on("/home", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/index.html");
+    });
+
+    server.on("/about", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/about.html");
     });
 }
 
-void InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
+void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 2, "  Trwa pomiar:  ");
     Score = new int[NumberOfMeasurement];
     int RandomTime = 0;
     unsigned long StartTime = 0, ElapsedTime = 0;
     Serial.println("Test Initialization");
     for (int i = 0; i < NumberOfMeasurement; i++) {
+        u8x8p.clearLine(4);
+        u8x8p.drawString(0, 4, String("       " + String(i+1)).c_str());
         RandomTime = random(RandomTimeMinBound, RandomTimeMaxBound);
         if (TimeBetweenLightingUp == (-1))
             delay(RandomTime);
@@ -118,4 +133,7 @@ void InitializeTest(int LightPin, int ButtonPin, Adafruit_SSD1306 display, int N
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 2, "   Zakonczono");
+    u8x8p.drawString(0, 4, "    Badanie");
 }

@@ -23,22 +23,24 @@
         <div class="row">
             <div class="col">
                 <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <a class="link" href="index.html">
-                            <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
-                            Badanie
-                        </a>
-                    </button>
+                        <button type="button" class="btn btn-primary btn-lg">
+                            <a href="/home">
+                                <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
+                                Badanie
+                            </a>
+                        </button>
                 </div>
             </div>
             <div class="col">
                 <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <a class="link" href="about.html">
-                            <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
-                            O projekcie
-                        </a>
-                    </button>
+                    <form action="/get">
+                        <button type="button" class="btn btn-primary btn-lg">
+                            <a href="/about">
+                                <i class="fas fa-graduation-cap" style="font-size: 25px;"></i>
+                                O projekcie
+                            </a>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -140,6 +142,17 @@
         from_value.disabled = true;
         to_value.disabled = true;
 
+        function home(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/home", true);
+            xhttp.send();
+        }
+
+        function about(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/about", true);
+            xhttp.send();
+        }
 
         slider.oninput = function() {
             output.innerHTML = this.value;

@@ -1,6 +1,4 @@
-#include "Adafruit_GFX.h"
 #include "extras.h"
-#include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
@@ -9,11 +7,11 @@
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 #include "SafeStorage.h"
+#include <U8x8lib.h>
 
 // Pin Assigments
 #define LightPin D4
 #define ButtonPin D3
-
 // WiFi config in SafeStorage.h Template:
 // #ifndef SAFESTORAGE_H
 // #define SAFESTORAGE_H
@@ -21,31 +19,12 @@
 // const char *ssid = "Koparka Apokalipsy";
 // const char *password = "xd";
 // #endif
-// Server Setup
+
 AsyncWebServer server(80);
 
 // Screen setup
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-// do usuniecia jak ogarniemy przekazywanie do strony
-// String ledState;
-// Replaces placeholder with LED state value
-// String processor(const String &var) {
-//     Serial.println(var);
-//     if (var == "STATE") {
-//         if (digitalRead(LightPin)) {
-//             ledState = "ON";
-//         } else {
-//             ledState = "OFF";
-//         }
-//         Serial.println(ledState);
-//         return ledState;
-//     }
-// }
+U8X8_SH1106_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
+// Font 5x7, 5x8, 8x13 can handle 16 chars per line
 
 void setup() {
     // Monitor Setup
@@ -53,13 +32,8 @@ void setup() {
 
     PinSetup(LightPin, ButtonPin);
 
-    display.clearDisplay();
-    display.display(); // zazwyczaj zmieniamy tylko zawartość buffora i wywołanie display() rysuje zawartość bufora na ekranie
-    for (int i = 0; i < display.height(); i += 4) {
-        display.drawLine(0, 0, display.width() - 1, i, WHITE);
-        display.display();
-        delay(1);
-    }
+    u8x8.begin();
+
     // File system
     if (!SetupSPIFFS())
         return;
@@ -69,11 +43,16 @@ void setup() {
     ConfigureWebpages(server);
     server.begin();
     initializeTestFromWebFlag = false;
+
+    u8x8.setFont(u8x8_font_8x13_1x2_f );
+    u8x8.drawString(0, 0, " Aby rozpoczac ");
+    u8x8.drawString(0, 2, "wejdz na strone:");
+    u8x8.drawString(0, 5, (" " + WiFi.localIP().toString()).c_str());
 }
 
 void loop() {
     if (initializeTestFromWebFlag) {
-        InitializeTest(LightPin, ButtonPin, display, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb);
+        InitializeTest(LightPin, ButtonPin, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb);
         initializeTestFromWebFlag = false;
     }
 }

@@ -89,11 +89,9 @@
         <div class="row" id="resultSection2">
             <div class="col">
                 <div class="center">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <a class="link" href="index.html">
+                    <button type="submit" class="btn btn-primary btn-lg" onclick="home()">
                             <i class="fas fa-lightbulb" style="font-size: 25px;"></i>
                             Nowe badanie
-                        </a>
                     </button>
                 </div>
             </div>
@@ -235,6 +233,12 @@
             }, 0);
             var avg = sum / data.length;
             return avg;
+        }
+        
+        function home(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/home", true);
+            xhttp.send();
         }
 
         function get_results() {
