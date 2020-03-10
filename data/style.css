@@ -72,8 +72,6 @@
     color: white;
 }
 
-
-
 .btn {
     font-size: 22px;
     font-weight: bold;
@@ -120,11 +118,6 @@ h4 {
 
 .center {
     text-align: center;
-}
-
-
-
-#result {
 }
 
 #average {
@@ -198,4 +191,17 @@ h4 {
 .buttons,.buttons:hover {
     text-decoration: none;
     color: white;
+}
+
+table{
+    width: 100%;
+    color: #017BFF;
+    text-align: center;
+    font-size: 20px;
+    border: 0px; white;
+    font-weight: bold;
+}
+
+.results{
+    color: #ACB382;
 }

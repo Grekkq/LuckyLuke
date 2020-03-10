@@ -47,6 +47,7 @@
             </div>
         </div>
         <br>
+        <br>
         <div class="row" id="resultSection1">
             <div class="col">
                 <div>
@@ -60,22 +61,7 @@
                     <h4>Odchylenie standardowe:&nbsp;<span id="deviation"></span>&nbsp;ms</h4>
                 </div>
             </div>
-            <div class="col">
-                <div class="center">
-                    Tu
-                </div>
-                <div class="center">
-                    będzie
-                </div>
-                <div class="center">
-                    tabela
-                </div>
-                <div class="center">
-                    z
-                </div>
-                <div class="center">
-                    wynikami
-                </div>
+            <div class="col" id="tableResults">
             </div>
         </div>
         <br>
@@ -242,7 +228,10 @@
             xhttp.open("GET", "/home", true);
             xhttp.send();
         }
-
+        
+        var ilosc_pomiarow=6;
+        var dataArr=[5,1,2,3,4,5];
+        
         function get_results() {
             hide();
             chartSection.style.display = "flex";
@@ -256,9 +245,9 @@
                     var varLabel = document.getElementById("variance");
                     var devLabel = document.getElementById("deviation");
                     var data = this.responseText;
-                    var dataArr = data.split(',').map(x => +x);
+                    dataArr = data.split(',').map(x => +x);
                     console.log(dataArr);
-                    var ilosc_pomiarow = parseInt(dataArr[0], 10);
+                    ilosc_pomiarow = parseInt(dataArr[0], 10);
                     dataArr.shift();
                     var label = 1;
                     for (var i = 0; i < ilosc_pomiarow; i++) {
@@ -273,5 +262,40 @@
             xhttp.open("GET", "/times", true);
             xhttp.send();
         }
+        
+        function addTable() {
+                var myTableDiv = document.getElementById("tableResults");
+
+                var table = document.createElement("TABLE");
+                table.border = "1";
+
+                var tableBody = document.createElement("TBODY");
+                var tr = document.createElement("TR");
+                tableBody.appendChild(tr);
+                var td = document.createElement("TD");
+                var td1 = document.createElement("TD");
+                td.width = "150";
+                td1.width = "150";
+                td.appendChild(document.createTextNode("Numer pomiaru"));
+                td1.appendChild(document.createTextNode("Wynik pomiaru \[ms\]"));
+                tr.appendChild(td);
+                tr.appendChild(td1);
+                table.appendChild(tableBody);
+                var tr = document.createElement("TR");
+                for (var i = 0; i < ilosc_pomiarow; i++) {
+                    var tr = document.createElement("TR");
+                    tableBody.appendChild(tr);
+                    var td = document.createElement("TD");
+                    var td1 = document.createElement("TD");
+                    td1.setAttribute("class", "results");
+                    td.appendChild(document.createTextNode(i + 1));
+                    td1.appendChild(document.createTextNode(dataArr[i]));
+                    tr.appendChild(td);
+                    tr.appendChild(td1);
+                }
+                myTableDiv.appendChild(table);
+            }
+            addTable();
+        
     </script>
 </body></html>
