@@ -72,6 +72,7 @@
             </div>
         </div>
         <br>
+        <br>
         <div class="row" id="resultSection2">
             <div class="col">
                 <div class="center">
@@ -84,6 +85,8 @@
                 </div>
             </div>
         </div>
+        <br>
+        <br>
     </div>
 
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -229,8 +232,8 @@
             xhttp.send();
         }
         
-        var ilosc_pomiarow=6;
-        var dataArr=[5,1,2,3,4,5];
+        var ilosc_pomiarow=0;
+        var dataArr=[];
         
         function get_results() {
             hide();
@@ -257,6 +260,7 @@
                     avgLabel.innerHTML = average(dataArr).toFixed(2);
                     varLabel.innerHTML = variance(dataArr).toFixed(2);
                     devLabel.innerHTML = Math.sqrt(variance(dataArr)).toFixed(2);
+                    addTable();
                 }
             };
             xhttp.open("GET", "/times", true);
@@ -295,7 +299,6 @@
                 }
                 myTableDiv.appendChild(table);
             }
-            addTable();
         
     </script>
 </body></html>

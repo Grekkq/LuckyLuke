@@ -90,7 +90,6 @@ void ConfigureWebpages(AsyncWebServer & server) {
         u8x8p.drawString(0, 2, " kolejny pomiar ");
         u8x8p.drawString(0, 4, "kliknij przycisk");
         u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
-        Serial.print("Test przycisku wez i mi daj te wyniki: ");
         String response = String(NumberOfMesurementsFromWeb);
         for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
             response += "," + String(Score[i]);
