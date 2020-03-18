@@ -1,4 +1,5 @@
 #include "extras.h"
+#include "SafeStorage.h"
 #include "ThingSpeak.h"
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
@@ -14,6 +15,8 @@ volatile int *Score;
 volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
 U8X8_SH1106_128X64_NONAME_HW_I2C u8x8p(U8X8_PIN_NONE);
+unsigned long myChannelNumber = SECRET_CH_ID;
+const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 #define EdgeOnButtonPress RISING
 #define ShortedMosfet HIGH
@@ -131,6 +134,10 @@ void ResultsOnOLED(volatile int *tab, int size) {
     u8x8p.drawString(0, 2, String("AVG: " + String(avg) + " ms").c_str());
     u8x8p.drawString(0, 4, String("MAX: " + String(max) + " ms").c_str());
     u8x8p.drawString(0, 6, String("MIN: " + String(min) + " ms").c_str());
+    ThingSpeak.setField(1, avg);
+    ThingSpeak.setField(2, min);
+    ThingSpeak.setField(3, max);
+    ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
 }
 
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
