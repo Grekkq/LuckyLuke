@@ -85,11 +85,11 @@ void ConfigureWebpages(AsyncWebServer & server) {
     });
 
     server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
-        u8x8p.clearDisplay();
-        u8x8p.drawString(0, 0, "  By rozpoczac  ");
-        u8x8p.drawString(0, 2, " kolejny pomiar ");
-        u8x8p.drawString(0, 4, "kliknij przycisk");
-        u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
+        // u8x8p.clearDisplay();
+        // u8x8p.drawString(0, 0, "  By rozpoczac  ");
+        // u8x8p.drawString(0, 2, " kolejny pomiar ");
+        // u8x8p.drawString(0, 4, "kliknij przycisk");
+        // u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
         String response = String(NumberOfMesurementsFromWeb);
         for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
             response += "," + String(Score[i]);
@@ -110,9 +110,63 @@ void ConfigureWebpages(AsyncWebServer & server) {
     });
 }
 
+void ResultsOnOLED(volatile int* tab, int size){
+    int min=tab[0];
+    int max=tab[0];
+    int sum=0;
+    for(int i=0;i<size;i++){
+        sum+=tab[i];
+        if(tab[i]<min){
+            min=tab[i];
+        }else if (tab[i]>max)
+        {
+            max=tab[i];
+        }
+    }
+    float avg=sum/size;
+
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0,2,"   Zakonczono   ");
+    u8x8p.drawString(0,4,"    badanie     ");
+    delay(4000);
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0,0,"     Wyniki     ");
+    u8x8p.drawString(0,2,String("AVG: " + String(avg)+" ms").c_str());
+    u8x8p.drawString(0,4,String("MAX: " + String(max)+" ms").c_str());
+    u8x8p.drawString(0,6,String("MIN: " + String(min)+" ms").c_str());
+}
+
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
     u8x8p.clearDisplay();
+    u8x8p.drawString(0, 2, "   Rozpoczynam  ");
+    u8x8p.drawString(0, 4, "    badanie     ");
+    delay(2000);
+
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 3, "  Przygotuj sie ");
+    delay(2000);
+
+    u8x8p.clearDisplay();
+    u8x8p.setFont(u8x8_font_inb46_4x8_r);
+    u8x8p.drawString(0, 0, "4");
+    delay(1000);
+
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 0, " 3");
+    delay(1000);
+
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 0, "  2");
+    delay(1000);
+
+    u8x8p.clearDisplay();
+    u8x8p.drawString(0, 0, "   1");
+    delay(1000);
+
+    u8x8p.setFont(u8x8_font_8x13_1x2_f );
+    u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "  Trwa pomiar:  ");
+
     Score = new int[NumberOfMeasurement];
     int RandomTime = 0;
     unsigned long StartTime = 0, ElapsedTime = 0;
@@ -137,9 +191,11 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
-    u8x8p.clearDisplay();
-    u8x8p.drawString(0, 0, "   Zakonczono   ");
-    u8x8p.drawString(0, 2, "    badanie     ");
-    u8x8p.drawString(0, 4, "   przejdz do   ");
-    u8x8p.drawString(0, 6, "    wynikow     ");
+    ResultsOnOLED(Score,NumberOfMeasurement);
+    // u8x8p.clearDisplay();
+    // u8x8p.drawString(0, 0, "Zakonczono pomiary");
+    // u8x8p.drawString(0, 2, "    badanie     ");
+    // u8x8p.drawString(0, 4, "   przejdz do   ");
+    // u8x8p.drawString(0, 6, "    wynikow     ");
+    
 }

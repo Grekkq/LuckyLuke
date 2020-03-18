@@ -92,10 +92,6 @@ h3 {
     color: #ACB382;
 }
 
-#time {
-    
-}
-
 .suffix {
     color: #017BFF;
     font-weight: bold;
@@ -172,11 +168,12 @@ h4 {
      color: #ACB382;
 }
 
-#variance {
-         color: #ACB382;
+#min {
+    color: #ACB382;
 }
 
-#myChart {
+#max {
+    color: #ACB382;
 }
 
 #chart {

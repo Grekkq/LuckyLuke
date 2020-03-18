@@ -54,11 +54,13 @@
                     <h4>Średni czas reakcji:&nbsp;<span id="average"></span>&nbsp;ms</h4>
                 </div>
                 <div>
-                    <h4>Wariancja:&nbsp;<span id="variance"></span>&nbsp;ms</h4>
-                </div>
-
-                <div>
                     <h4>Odchylenie standardowe:&nbsp;<span id="deviation"></span>&nbsp;ms</h4>
+                </div>
+                <div>
+                    <h4>Maksymalny czas reakcji:&nbsp;<span id="max"></span>&nbsp;ms</h4>
+                </div>
+                <div>
+                    <h4>Minimalny czas reakcji:&nbsp;<span id="min"></span>&nbsp;ms</h4>
                 </div>
             </div>
             <div class="col" id="tableResults">
@@ -241,24 +243,28 @@
             chartSection1.style.display = "flex";
             chartSection2.style.display = "flex";
             chartSection3.style.display = "flex";
+
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    var avgLabel = document.getElementById("average");
-                    var varLabel = document.getElementById("variance");
+                    var avgLabel = document.getElementById("average");;
                     var devLabel = document.getElementById("deviation");
+                    var minLabel = document.getElementById("min");
+                    var maxLabel = document.getElementById("max");
+
                     var data = this.responseText;
                     dataArr = data.split(',').map(x => +x);
-                    console.log(dataArr);
                     ilosc_pomiarow = parseInt(dataArr[0], 10);
                     dataArr.shift();
+                    minLabel.innerHTML=Math.min.apply(Math, dataArr);
+                    maxLabel.innerHTML=Math.max.apply(Math, dataArr);
+
                     var label = 1;
                     for (var i = 0; i < ilosc_pomiarow; i++) {
                         addData(chart, label, dataArr[i]);
                         label++;
                     }
                     avgLabel.innerHTML = average(dataArr).toFixed(2);
-                    varLabel.innerHTML = variance(dataArr).toFixed(2);
                     devLabel.innerHTML = Math.sqrt(variance(dataArr)).toFixed(2);
                     addTable();
                 }
