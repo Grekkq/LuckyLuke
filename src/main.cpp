@@ -1,13 +1,14 @@
+#include "SafeStorage.h"
+#include "ThingSpeak.h"
 #include "extras.h"
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <FS.h>
+#include <U8x8lib.h>
+#include <Wire.h>
 // ta biblioteka to same kłopty xd
 #include <ESPAsyncWebServer.h>
-#include <Wire.h>
-#include "SafeStorage.h"
-#include <U8x8lib.h>
 
 // Pin Assigments
 #define LightPin D4
@@ -44,7 +45,7 @@ void setup() {
     server.begin();
     initializeTestFromWebFlag = false;
 
-    u8x8.setFont(u8x8_font_8x13_1x2_f );
+    u8x8.setFont(u8x8_font_8x13_1x2_f);
     u8x8.drawString(0, 0, " Aby rozpoczac  ");
     u8x8.drawString(0, 3, "wejdz na strone:");
     u8x8.drawString(0, 6, ("  " + WiFi.localIP().toString()).c_str());

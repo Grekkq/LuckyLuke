@@ -1,7 +1,8 @@
+#include "extras.h"
+#include "ThingSpeak.h"
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
-#include "extras.h"
 #include <U8x8lib.h>
 
 volatile int NumberOfMesurementsFromWeb = 0;
@@ -15,7 +16,6 @@ volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
 U8X8_SH1106_128X64_NONAME_HW_I2C u8x8p(U8X8_PIN_NONE);
 
-
 #define EdgeOnButtonPress RISING
 #define ShortedMosfet HIGH
 
@@ -28,7 +28,7 @@ void PinSetup(int LightPin, int ButtonPin) {
     pinMode(LightPin, OUTPUT);
     pinMode(ButtonPin, INPUT_PULLUP);
     u8x8p.begin();
-    u8x8p.setFont(u8x8_font_8x13_1x2_f );
+    u8x8p.setFont(u8x8_font_8x13_1x2_f);
 }
 
 bool SetupSPIFFS() {
@@ -40,7 +40,7 @@ bool SetupSPIFFS() {
     return true;
 }
 
-void SetupWiFi(const char * ssid, const char * password) {
+void SetupWiFi(const char *ssid, const char *password) {
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
@@ -48,7 +48,7 @@ void SetupWiFi(const char * ssid, const char * password) {
     }
 }
 
-unsigned long LightAndClockStart(int LightPin,  int ButtonPin) {
+unsigned long LightAndClockStart(int LightPin, int ButtonPin) {
     unsigned long current = millis();
     digitalWrite(LightPin, ShortedMosfet);
     attachInterrupt(digitalPinToInterrupt(ButtonPin), doOnButtonClick, EdgeOnButtonPress);
@@ -56,10 +56,9 @@ unsigned long LightAndClockStart(int LightPin,  int ButtonPin) {
     return current;
 }
 
-void ConfigureWebpages(AsyncWebServer & server) {
+void ConfigureWebpages(AsyncWebServer &server) {
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        
         request->send(SPIFFS, "/index.html");
     });
     // Route to load style.css file
@@ -91,10 +90,10 @@ void ConfigureWebpages(AsyncWebServer & server) {
         // u8x8p.drawString(0, 4, "kliknij przycisk");
         // u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
         String response = String(NumberOfMesurementsFromWeb);
-        for(int i=0; i< NumberOfMesurementsFromWeb; i++) {
+        for (int i = 0; i < NumberOfMesurementsFromWeb; i++) {
             response += "," + String(Score[i]);
         }
-        request->send_P(200, "text/plain", response.c_str() );
+        request->send_P(200, "text/plain", response.c_str());
     });
 
     server.on("/home", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -110,30 +109,29 @@ void ConfigureWebpages(AsyncWebServer & server) {
     });
 }
 
-void ResultsOnOLED(volatile int* tab, int size){
-    int min=tab[0];
-    int max=tab[0];
-    float sum=0;
-    for(int i=0;i<size;i++){
-        sum+=tab[i];
-        if(tab[i]<min){
-            min=tab[i];
-        }else if (tab[i]>max)
-        {
-            max=tab[i];
+void ResultsOnOLED(volatile int *tab, int size) {
+    int min = tab[0];
+    int max = tab[0];
+    float sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += tab[i];
+        if (tab[i] < min) {
+            min = tab[i];
+        } else if (tab[i] > max) {
+            max = tab[i];
         }
     }
-    float avg=sum/size;
+    float avg = sum / size;
 
     u8x8p.clearDisplay();
-    u8x8p.drawString(0,2,"   Zakonczono   ");
-    u8x8p.drawString(0,4,"    badanie     ");
+    u8x8p.drawString(0, 2, "   Zakonczono   ");
+    u8x8p.drawString(0, 4, "    badanie     ");
     delay(4000);
     u8x8p.clearDisplay();
-    u8x8p.drawString(0,0,"     Wyniki     ");
-    u8x8p.drawString(0,2,String("AVG: " + String(avg)+" ms").c_str());
-    u8x8p.drawString(0,4,String("MAX: " + String(max)+" ms").c_str());
-    u8x8p.drawString(0,6,String("MIN: " + String(min)+" ms").c_str());
+    u8x8p.drawString(0, 0, "     Wyniki     ");
+    u8x8p.drawString(0, 2, String("AVG: " + String(avg) + " ms").c_str());
+    u8x8p.drawString(0, 4, String("MAX: " + String(max) + " ms").c_str());
+    u8x8p.drawString(0, 6, String("MIN: " + String(min) + " ms").c_str());
 }
 
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
@@ -163,7 +161,7 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
     u8x8p.drawString(0, 0, "   1");
     delay(1000);
 
-    u8x8p.setFont(u8x8_font_8x13_1x2_f );
+    u8x8p.setFont(u8x8_font_8x13_1x2_f);
     u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "  Trwa pomiar:  ");
 
@@ -173,7 +171,7 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
     Serial.println("Test Initialization");
     for (int i = 0; i < NumberOfMeasurement; i++) {
         u8x8p.clearLine(4);
-        u8x8p.drawString(0, 4, String("       " + String(i+1)).c_str());
+        u8x8p.drawString(0, 4, String("       " + String(i + 1)).c_str());
         RandomTime = random(RandomTimeMinBound, RandomTimeMaxBound);
         if (TimeBetweenLightingUp == (-1))
             delay(RandomTime);
@@ -191,11 +189,10 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
-    ResultsOnOLED(Score,NumberOfMeasurement);
+    ResultsOnOLED(Score, NumberOfMeasurement);
     // u8x8p.clearDisplay();
     // u8x8p.drawString(0, 0, "Zakonczono pomiary");
     // u8x8p.drawString(0, 2, "    badanie     ");
     // u8x8p.drawString(0, 4, "   przejdz do   ");
     // u8x8p.drawString(0, 6, "    wynikow     ");
-    
 }

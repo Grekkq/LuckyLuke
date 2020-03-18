@@ -1,9 +1,10 @@
 #include "Adafruit_GFX.h"
+#include "ThingSpeak.h"
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
-#include <Wire.h>
 #include <ESPAsyncWebServer.h>
 #include <U8x8lib.h>
+#include <Wire.h>
 
 extern volatile int NumberOfMesurementsFromWeb;
 extern volatile int TimeBetweenLightingUpDiodeFromWeb;
@@ -17,9 +18,9 @@ void PinSetup(int LightPin, int ButtonPin);
 // Starts SPIFFS and return false if error occurs
 bool SetupSPIFFS();
 // Sets up WiFi connection
-void SetupWiFi(const char * ssid, const char * password);
+void SetupWiFi(const char *ssid, const char *password);
 // Interactions between User and Server
-void ConfigureWebpages(AsyncWebServer & server);
+void ConfigureWebpages(AsyncWebServer &server);
 // Turn on LED, enable interrupt on button click and return time at the call of this function
 unsigned long LightAndClockStart(int LightPin, int ButtonPin);
 // Return vecotr of recorded times, Time in miliseconds -1 for random
