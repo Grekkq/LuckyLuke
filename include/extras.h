@@ -22,4 +22,4 @@ void ConfigureWebpages(AsyncWebServer &server);
 // Turn on LED, enable interrupt on button click and return time at the call of this function
 unsigned long LightAndClockStart(int LightPin, int ButtonPin);
 // Return vecotr of recorded times, Time in miliseconds -1 for random
-void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound);
+void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey);

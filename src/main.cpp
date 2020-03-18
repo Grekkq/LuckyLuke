@@ -22,7 +22,8 @@
 // #endif
 
 AsyncWebServer server(80);
-
+unsigned long myChannelNumber = SECRET_CH_ID;
+const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 // Screen setup
 U8X8_SH1106_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
 // Font 5x7, 5x8, 8x13 can handle 16 chars per line
@@ -53,7 +54,7 @@ void setup() {
 
 void loop() {
     if (initializeTestFromWebFlag) {
-        InitializeTest(LightPin, ButtonPin, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb);
+        InitializeTest(LightPin, ButtonPin, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb, myChannelNumber, myWriteAPIKey);
         initializeTestFromWebFlag = false;
     }
 }

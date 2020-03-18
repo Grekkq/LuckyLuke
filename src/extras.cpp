@@ -1,5 +1,4 @@
 #include "extras.h"
-#include "SafeStorage.h"
 #include "ThingSpeak.h"
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
@@ -15,8 +14,6 @@ volatile int *Score;
 volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
 U8X8_SH1106_128X64_NONAME_HW_I2C u8x8p(U8X8_PIN_NONE);
-unsigned long myChannelNumber = SECRET_CH_ID;
-const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 #define EdgeOnButtonPress RISING
 #define ShortedMosfet HIGH
@@ -111,7 +108,7 @@ void ConfigureWebpages(AsyncWebServer &server) {
     });
 }
 
-void ResultsOnOLED(volatile int *tab, int size) {
+void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, const char *myWriteAPIKey) {
     int min = tab[0];
     int max = tab[0];
     float sum = 0;
@@ -140,7 +137,7 @@ void ResultsOnOLED(volatile int *tab, int size) {
     ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
 }
 
-void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound) {
+void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey) {
     u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "   Rozpoczynam  ");
     u8x8p.drawString(0, 4, "    badanie     ");
@@ -195,7 +192,7 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
-    ResultsOnOLED(Score, NumberOfMeasurement);
+    ResultsOnOLED(Score, NumberOfMeasurement, myChannelNumber, myWriteAPIKey);
     // u8x8p.clearDisplay();
     // u8x8p.drawString(0, 0, "Zakonczono pomiary");
     // u8x8p.drawString(0, 2, "    badanie     ");
