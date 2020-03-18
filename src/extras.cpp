@@ -113,7 +113,7 @@ void ConfigureWebpages(AsyncWebServer & server) {
 void ResultsOnOLED(volatile int* tab, int size){
     int min=tab[0];
     int max=tab[0];
-    int sum=0;
+    float sum=0;
     for(int i=0;i<size;i++){
         sum+=tab[i];
         if(tab[i]<min){
