@@ -1,6 +1,5 @@
 #include "extras.h"
 #include "ThingSpeak.h"
-#include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <U8x8lib.h>
