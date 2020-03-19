@@ -1,5 +1,4 @@
 #include "extras.h"
-#include "ThingSpeak.h"
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <U8x8lib.h>
@@ -83,11 +82,6 @@ void ConfigureWebpages(AsyncWebServer &server) {
     });
 
     server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
-        // u8x8p.clearDisplay();
-        // u8x8p.drawString(0, 0, "  By rozpoczac  ");
-        // u8x8p.drawString(0, 2, " kolejny pomiar ");
-        // u8x8p.drawString(0, 4, "kliknij przycisk");
-        // u8x8p.drawString(0, 6, " \"Nowe Badanie\" ");
         String response = String(NumberOfMesurementsFromWeb);
         for (int i = 0; i < NumberOfMesurementsFromWeb; i++) {
             response += "," + String(Score[i]);
@@ -131,10 +125,6 @@ void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, c
     u8x8p.drawString(0, 2, String("AVG: " + String(avg) + " ms").c_str());
     u8x8p.drawString(0, 4, String("MAX: " + String(max) + " ms").c_str());
     u8x8p.drawString(0, 6, String("MIN: " + String(min) + " ms").c_str());
-    ThingSpeak.setField(1, avg);
-    ThingSpeak.setField(2, min);
-    ThingSpeak.setField(3, max);
-    ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
 }
 
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey) {
@@ -193,9 +183,4 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Score[i] = (ElapsedTime);
     }
     ResultsOnOLED(Score, NumberOfMeasurement, myChannelNumber, myWriteAPIKey);
-    // u8x8p.clearDisplay();
-    // u8x8p.drawString(0, 0, "Zakonczono pomiary");
-    // u8x8p.drawString(0, 2, "    badanie     ");
-    // u8x8p.drawString(0, 4, "   przejdz do   ");
-    // u8x8p.drawString(0, 6, "    wynikow     ");
 }
