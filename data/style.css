@@ -176,6 +176,10 @@ h4 {
     color: #ACB382;
 }
 
+#dateTime {
+    color: #ACB382;
+}
+
 #chart {
     width: 40%;
     height: 40%;
@@ -200,5 +204,10 @@ table{
 }
 
 .results{
+    color: #ACB382;
+}
+
+#thingSpeak {
+    text-decoration: none;
     color: #ACB382;
 }

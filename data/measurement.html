@@ -51,6 +51,12 @@
         <div class="row" id="resultSection1">
             <div class="col">
                 <div>
+                    <h4>Data pomiaru:&nbsp;<span id="dateTime"></span></h4>
+                </div>
+                 <div>
+                    <h4>Wyniki ThingSpeak:&nbsp;<a id="thingSpeak" href="https://thingspeak.com/channels/1022117" target="_blank">LINK</a> </h4>
+                </div>
+                <div>
                     <h4>Średni czas reakcji:&nbsp;<span id="average"></span>&nbsp;ms</h4>
                 </div>
                 <div>
@@ -227,16 +233,23 @@
             var avg = sum / data.length;
             return avg;
         }
-        
-        function home(){
+
+        function home() {
             var xhttp = new XMLHttpRequest();
             xhttp.open("GET", "/home", true);
             xhttp.send();
         }
-        
-        var ilosc_pomiarow=0;
-        var dataArr=[];
-        
+
+        function httpGet(theUrl) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl, false); // false for synchronous request
+            xmlHttp.send(null);
+            return xmlHttp.responseText;
+        }
+
+        var ilosc_pomiarow = 0;
+        var dataArr = [];
+
         function get_results() {
             hide();
             chartSection.style.display = "flex";
@@ -251,19 +264,28 @@
                     var devLabel = document.getElementById("deviation");
                     var minLabel = document.getElementById("min");
                     var maxLabel = document.getElementById("max");
+                    var dateLabel = document.getElementById("dateTime");
 
                     var data = this.responseText;
                     dataArr = data.split(',').map(x => +x);
                     ilosc_pomiarow = parseInt(dataArr[0], 10);
                     dataArr.shift();
-                    minLabel.innerHTML=Math.min.apply(Math, dataArr);
-                    maxLabel.innerHTML=Math.max.apply(Math, dataArr);
+                    minLabel.innerHTML = Math.min.apply(Math, dataArr);
+                    maxLabel.innerHTML = Math.max.apply(Math, dataArr);
 
                     var label = 1;
                     for (var i = 0; i < ilosc_pomiarow; i++) {
                         addData(chart, label, dataArr[i]);
                         label++;
                     }
+
+                    var json = httpGet("https://api.thingspeak.com/channels/1022117/fields/4.json?api_key=L0N5Z4T9987LJ0DK&results=1");
+                    var parsed = JSON.parse(json);
+                    var dateFromJSON = parsed.feeds[0].created_at;
+                    var dateFormat = new Date(dateFromJSON);
+                    var data = dateFormat.getFullYear().toString().padStart(4, '0')+"-"+((dateFormat.getMonth() + 1).toString().padStart(2, '0'))+"-"+(dateFormat.getDate().toString().padStart(2, '0'))+" "+(dateFormat.getHours().toString().padStart(2, '0'))+":"+(dateFormat.getMinutes().toString().padStart(2, '0'))+":"+dateFormat.getSeconds().toString().padStart(2, '0');
+                    
+                    dateLabel.innerHTML=data;
                     avgLabel.innerHTML = average(dataArr).toFixed(2);
                     devLabel.innerHTML = Math.sqrt(variance(dataArr)).toFixed(2);
                     addTable();
@@ -272,39 +294,38 @@
             xhttp.open("GET", "/times", true);
             xhttp.send();
         }
-        
+
         function addTable() {
-                var myTableDiv = document.getElementById("tableResults");
+            var myTableDiv = document.getElementById("tableResults");
 
-                var table = document.createElement("TABLE");
-                table.border = "1";
+            var table = document.createElement("TABLE");
+            table.border = "1";
 
-                var tableBody = document.createElement("TBODY");
+            var tableBody = document.createElement("TBODY");
+            var tr = document.createElement("TR");
+            tableBody.appendChild(tr);
+            var td = document.createElement("TD");
+            var td1 = document.createElement("TD");
+            td.width = "150";
+            td1.width = "150";
+            td.appendChild(document.createTextNode("Numer pomiaru"));
+            td1.appendChild(document.createTextNode("Wynik pomiaru \[ms\]"));
+            tr.appendChild(td);
+            tr.appendChild(td1);
+            table.appendChild(tableBody);
+            var tr = document.createElement("TR");
+            for (var i = 0; i < ilosc_pomiarow; i++) {
                 var tr = document.createElement("TR");
                 tableBody.appendChild(tr);
                 var td = document.createElement("TD");
                 var td1 = document.createElement("TD");
-                td.width = "150";
-                td1.width = "150";
-                td.appendChild(document.createTextNode("Numer pomiaru"));
-                td1.appendChild(document.createTextNode("Wynik pomiaru \[ms\]"));
+                td1.setAttribute("class", "results");
+                td.appendChild(document.createTextNode(i + 1));
+                td1.appendChild(document.createTextNode(dataArr[i]));
                 tr.appendChild(td);
                 tr.appendChild(td1);
-                table.appendChild(tableBody);
-                var tr = document.createElement("TR");
-                for (var i = 0; i < ilosc_pomiarow; i++) {
-                    var tr = document.createElement("TR");
-                    tableBody.appendChild(tr);
-                    var td = document.createElement("TD");
-                    var td1 = document.createElement("TD");
-                    td1.setAttribute("class", "results");
-                    td.appendChild(document.createTextNode(i + 1));
-                    td1.appendChild(document.createTextNode(dataArr[i]));
-                    tr.appendChild(td);
-                    tr.appendChild(td1);
-                }
-                myTableDiv.appendChild(table);
             }
-        
+            myTableDiv.appendChild(table);
+        }
     </script>
 </body></html>

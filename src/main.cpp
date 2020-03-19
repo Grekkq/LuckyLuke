@@ -1,4 +1,4 @@
-#include "ESP8266HTTPClient.h"
+#include <ESP8266HTTPClient.h>
 #include "SafeStorage.h"
 #include "extras.h"
 #include <Arduino.h>
@@ -21,7 +21,6 @@
 // const char *password = "xd";
 // #endif
 
-HTTPClient http;
 AsyncWebServer server(80);
 unsigned long myChannelNumber = SECRET_CH_ID;
 const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
@@ -29,7 +28,8 @@ const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 U8X8_SH1106_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
 // Font 5x7, 5x8, 8x13 can handle 16 chars per line
 
-void setup() {
+void setup()
+{
     // Monitor Setup
     Serial.begin(115200);
 
@@ -46,18 +46,16 @@ void setup() {
     ConfigureWebpages(server);
     server.begin();
     initializeTestFromWebFlag = false;
-    http.begin("https://api.thingspeak.com/update?api_key=Y2LG7XRCFUB669W2&field1=0");
-    Serial.println("wysylanie requesta GET:");
-    int test = http.GET();
-Serial.println(test);
     u8x8.setFont(u8x8_font_8x13_1x2_f);
     u8x8.drawString(0, 0, " Aby rozpoczac  ");
     u8x8.drawString(0, 3, "wejdz na strone:");
     u8x8.drawString(0, 6, ("  " + WiFi.localIP().toString()).c_str());
 }
 
-void loop() {
-    if (initializeTestFromWebFlag) {
+void loop()
+{
+    if (initializeTestFromWebFlag)
+    {
         InitializeTest(LightPin, ButtonPin, NumberOfMesurementsFromWeb, TimeBetweenLightingUpDiodeFromWeb, RandomTimeMinBoundFromWeb, RandomTimeMaxBoundFromWeb, myChannelNumber, myWriteAPIKey);
         initializeTestFromWebFlag = false;
     }

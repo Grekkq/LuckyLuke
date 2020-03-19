@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <U8x8lib.h>
+#include <ESP8266HTTPClient.h>
 
 volatile int NumberOfMesurementsFromWeb = 0;
 volatile int TimeBetweenLightingUpDiodeFromWeb = 0;
@@ -9,6 +10,7 @@ volatile int RandomTimeMinBoundFromWeb = 0;
 volatile int RandomTimeMaxBoundFromWeb = 0;
 volatile bool initializeTestFromWebFlag = false;
 volatile int *Score;
+HTTPClient http;
 // Stores time in miliseconds from button interrupt
 volatile unsigned long FinishTime = 0;
 volatile bool InterruptFlag = 0;
@@ -17,36 +19,43 @@ U8X8_SH1106_128X64_NONAME_HW_I2C u8x8p(U8X8_PIN_NONE);
 #define EdgeOnButtonPress RISING
 #define ShortedMosfet HIGH
 
-void ICACHE_RAM_ATTR doOnButtonClick() {
+void ICACHE_RAM_ATTR doOnButtonClick()
+{
     FinishTime = millis();
     InterruptFlag = true;
 }
 
-void PinSetup(int LightPin, int ButtonPin) {
+void PinSetup(int LightPin, int ButtonPin)
+{
     pinMode(LightPin, OUTPUT);
     pinMode(ButtonPin, INPUT_PULLUP);
     u8x8p.begin();
     u8x8p.setFont(u8x8_font_8x13_1x2_f);
 }
 
-bool SetupSPIFFS() {
+bool SetupSPIFFS()
+{
     Serial.println("Startin SPIFFS...");
-    if (!SPIFFS.begin()) {
+    if (!SPIFFS.begin())
+    {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return false;
     }
     return true;
 }
 
-void SetupWiFi(const char *ssid, const char *password) {
+void SetupWiFi(const char *ssid, const char *password)
+{
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
+    while (WiFi.status() != WL_CONNECTED)
+    {
         delay(1000);
         Serial.println("Connecting to WiFi..");
     }
 }
 
-unsigned long LightAndClockStart(int LightPin, int ButtonPin) {
+unsigned long LightAndClockStart(int LightPin, int ButtonPin)
+{
     unsigned long current = millis();
     digitalWrite(LightPin, ShortedMosfet);
     attachInterrupt(digitalPinToInterrupt(ButtonPin), doOnButtonClick, EdgeOnButtonPress);
@@ -54,7 +63,8 @@ unsigned long LightAndClockStart(int LightPin, int ButtonPin) {
     return current;
 }
 
-void ConfigureWebpages(AsyncWebServer &server) {
+void ConfigureWebpages(AsyncWebServer &server)
+{
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/index.html");
@@ -83,7 +93,8 @@ void ConfigureWebpages(AsyncWebServer &server) {
 
     server.on("/times", HTTP_GET, [](AsyncWebServerRequest *request) {
         String response = String(NumberOfMesurementsFromWeb);
-        for (int i = 0; i < NumberOfMesurementsFromWeb; i++) {
+        for (int i = 0; i < NumberOfMesurementsFromWeb; i++)
+        {
             response += "," + String(Score[i]);
         }
         request->send_P(200, "text/plain", response.c_str());
@@ -102,19 +113,36 @@ void ConfigureWebpages(AsyncWebServer &server) {
     });
 }
 
-void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, const char *myWriteAPIKey) {
+void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, const char *myWriteAPIKey, int TimeBetweenLightingUp)
+{
     int min = tab[0];
     int max = tab[0];
     float sum = 0;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         sum += tab[i];
-        if (tab[i] < min) {
+        if (tab[i] < min)
+        {
             min = tab[i];
-        } else if (tab[i] > max) {
+        }
+        else if (tab[i] > max)
+        {
             max = tab[i];
         }
     }
     float avg = sum / size;
+
+    Serial.println("Sending API request:");
+    if (TimeBetweenLightingUp == (-1))
+        http.begin(String("http://api.thingspeak.com/update?api_key=Y2LG7XRCFUB669W2&field1=" + String(avg) + "&field2=" + String(min) + "&field3=" + String(max)));
+    else
+        http.begin(String("http://api.thingspeak.com/update?api_key=Y2LG7XRCFUB669W2&field4=" + String(avg) + "&field5=" + String(min) + "&field6=" + String(max)));
+
+    http.addHeader("Content-Type", "text/plain");
+    int httpCode = http.GET();
+    String payload = http.getString();
+    Serial.println(httpCode); // HTTP response Code
+    Serial.println(payload);  // datapoint id
 
     u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "   Zakonczono   ");
@@ -125,9 +153,11 @@ void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, c
     u8x8p.drawString(0, 2, String("AVG: " + String(avg) + " ms").c_str());
     u8x8p.drawString(0, 4, String("MAX: " + String(max) + " ms").c_str());
     u8x8p.drawString(0, 6, String("MIN: " + String(min) + " ms").c_str());
+    http.end();
 }
 
-void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey) {
+void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey)
+{
     u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "   Rozpoczynam  ");
     u8x8p.drawString(0, 4, "    badanie     ");
@@ -162,7 +192,8 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
     int RandomTime = 0;
     unsigned long StartTime = 0, ElapsedTime = 0;
     Serial.println("Test Initialization");
-    for (int i = 0; i < NumberOfMeasurement; i++) {
+    for (int i = 0; i < NumberOfMeasurement; i++)
+    {
         u8x8p.clearLine(4);
         u8x8p.drawString(0, 4, String("       " + String(i + 1)).c_str());
         RandomTime = random(RandomTimeMinBound, RandomTimeMaxBound);
@@ -173,7 +204,8 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
 
         Serial.println("Dioda ON");
         StartTime = LightAndClockStart(LightPin, ButtonPin);
-        while (!InterruptFlag) {
+        while (!InterruptFlag)
+        {
             delay(0);
         }
         digitalWrite(LightPin, !ShortedMosfet);
@@ -182,5 +214,5 @@ void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int Ti
         Serial.println(ElapsedTime);
         Score[i] = (ElapsedTime);
     }
-    ResultsOnOLED(Score, NumberOfMeasurement, myChannelNumber, myWriteAPIKey);
+    ResultsOnOLED(Score, NumberOfMeasurement, myChannelNumber, myWriteAPIKey, TimeBetweenLightingUp);
 }
