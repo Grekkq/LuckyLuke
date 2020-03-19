@@ -125,20 +125,6 @@ void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, c
     u8x8p.drawString(0, 2, String("AVG: " + String(avg) + " ms").c_str());
     u8x8p.drawString(0, 4, String("MAX: " + String(max) + " ms").c_str());
     u8x8p.drawString(0, 6, String("MIN: " + String(min) + " ms").c_str());
-<<<<<<< HEAD
-=======
-    delay(1000);
-    // ThingSpeak.setField(1, avg);
-    delay(1000);
-    // ThingSpeak.setField(2, min);
-    // delay(1000);
-    // ThingSpeak.setField(3, max);
-    // delay(1000);
-    // Serial.println("Wysylanie: ");
-    // int test = ThingSpeak.writeField(1022117, 1, 5, "T81H9K2H99ML7SW5");
-    // Serial.println(test);
-    delay(1000);
->>>>>>> 398f66e5ba7f42c77e56e37da463066a9292144d
 }
 
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey) {
