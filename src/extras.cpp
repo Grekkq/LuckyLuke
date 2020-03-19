@@ -128,9 +128,6 @@ void ResultsOnOLED(volatile int *tab, int size, unsigned long myChannelNumber, c
 }
 
 void InitializeTest(int LightPin, int ButtonPin, int NumberOfMeasurement, int TimeBetweenLightingUp, int RandomTimeMinBound, int RandomTimeMaxBound, unsigned long myChannelNumber, const char *myWriteAPIKey) {
-    // Serial.println("Wysylanie: ");
-    ThingSpeak.writeField(1022117, 1, float(5), "Y2LG7XRCFUB669W2");
-    // Serial.println(test);
     u8x8p.clearDisplay();
     u8x8p.drawString(0, 2, "   Rozpoczynam  ");
     u8x8p.drawString(0, 4, "    badanie     ");
