@@ -1,3 +1,4 @@
+#include "ESP8266HTTPClient.h"
 #include "SafeStorage.h"
 #include "extras.h"
 #include <Arduino.h>
@@ -20,6 +21,7 @@
 // const char *password = "xd";
 // #endif
 
+HTTPClient http;
 AsyncWebServer server(80);
 unsigned long myChannelNumber = SECRET_CH_ID;
 const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
@@ -44,7 +46,10 @@ void setup() {
     ConfigureWebpages(server);
     server.begin();
     initializeTestFromWebFlag = false;
-
+    http.begin("https://api.thingspeak.com/update?api_key=Y2LG7XRCFUB669W2&field1=0");
+    Serial.println("wysylanie requesta GET:");
+    int test = http.GET();
+Serial.println(test);
     u8x8.setFont(u8x8_font_8x13_1x2_f);
     u8x8.drawString(0, 0, " Aby rozpoczac  ");
     u8x8.drawString(0, 3, "wejdz na strone:");
